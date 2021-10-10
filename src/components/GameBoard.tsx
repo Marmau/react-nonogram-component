@@ -16,26 +16,6 @@ type InnerBoardProps = Omit<
   "onBoardMouseUp" | "onBoardMouseDown" | "onBoardMouseLeave"
 >;
 
-// const cssGameBoard = css`
-//   display: flex;
-//   flex-direction: column;
-//   background-color: #bbb;
-//   width: auto;
-//   box-shadow: 0px 0px 0px 4px #bbb;
-//   transition: background-color 0.2s ease;
-
-//   &.hide-grid {
-//     background-color: transparent;
-//     box-shadow: 0px 0px 0px 5px transparent;
-//   }
-
-//   .board-row {
-//     display: flex;
-//     flex-flow: row;
-//     justify-content: center;
-//   }
-// `
-
 function InnerBoard(props: InnerBoardProps) {
   return (
     <React.Fragment>
