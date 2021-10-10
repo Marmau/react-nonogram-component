@@ -133,7 +133,7 @@ export function Nonogram() {
           solution={solution}
           init={init}
           onRefresh={refresh}
-        ></NonogramGrid>
+        />
       </Box>
 
       <Box
