@@ -3,7 +3,6 @@ import { css } from "@emotion/css"
 export const gameControllerStyles = css`
   display: grid;
   grid-auto-columns: min-content;
-  color: #353235;
   user-select: none;
   cursor: default;
   grid-template-areas:
@@ -13,7 +12,6 @@ export const gameControllerStyles = css`
   grid-template-rows: min-content 1fr;
   grid-template-columns: min-content 1fr;
   width: calc(100% - 5px);
-  padding: 5px;
 
   .area-col-hints {
     grid-area: col-hints;
@@ -57,6 +55,7 @@ export const gameControllerStyles = css`
   .hint-groups {
     display: flex;
     justify-content: center;
+    font-family: var(--hint-font-family, monospace);
 
     transition: opacity 0.2s ease;
 
@@ -67,7 +66,7 @@ export const gameControllerStyles = css`
       align-items: center;
 
       &.overflow {
-        background: rgba(255, 0, 0, 0.1);
+        background: var(--hint-overflow-background, rgba(255, 0, 0, 0.1));
       }
 
       .inner-hint-group {
@@ -77,11 +76,11 @@ export const gameControllerStyles = css`
         .hint {
           display: flex;
           align-items: center;
-          color: #000;
+          color: var(--hint-color, #000);
           transition: color 0.2s ease 0s;
 
           &.crossout {
-            color: #bbb;
+            color: var(--hint-crossout-color, #bbb);
           }
         }
       }
@@ -127,9 +126,9 @@ export const gameControllerStyles = css`
   .game-board {
     display: flex;
     flex-direction: column;
-    background-color: #bbb;
+    background-color: var(--game-board-background-color, #bbb);
     width: auto;
-    box-shadow: 0px 0px 0px 4px #bbb;
+    box-shadow: 0px 0px 0px 4px var(--game-board-background-color, #bbb);
     transition: background-color 0.2s ease;
 
     .board-row {
@@ -157,23 +156,23 @@ export const gameControllerStyles = css`
     padding: 0px;
     position: relative;
 
-    &.border-bottom {
-      box-shadow: 0px -1px 0px 0px #444;
+    &.border-top {
+      box-shadow: 0px -1px 0px 0px var(--game-grid-color, #444);
     }
 
-    &.border-right {
-      box-shadow: -1px 0px 0px 0px #444;
+    &.border-left {
+      box-shadow: -1px 0px 0px 0px var(--game-grid-color, #444);
     }
 
-    &.border-bottom.border-right {
-      box-shadow: -1px -1px 0px 0px #444;
+    &.border-top.border-left {
+      box-shadow: -1px -1px 0px 0px var(--game-grid-color, #444);
     }
 
     .inner-square {
       height: calc(100% - 2px);
       width: calc(100% - 2px);
       border-radius: 3px;
-      border: solid 1px #bbb;
+      border: solid 1px var(--game-board-background-color, #bbb);
 
       display: flex;
       align-items: center;
@@ -204,20 +203,20 @@ export const gameControllerStyles = css`
       }
 
       &.filled {
-        background-color: #353235;
+        background-color: var(--square-filled-background-color, #353235);
       }
 
       &.empty {
-        background-color: #fff;
+        background-color: var(--square-empty-background-color, #fff);
       }
 
       &.marked {
-        background-color: #fff;
-        color: #bbb;
+        background-color: var(--square-marked-background-color, #fff);
+        color: var(--square-marked-symbol-color, #bbb);
         transition: color 0.2s;
 
         &::before {
-          content: "\\2738";
+          content: var(--square-marked-symbol, "\\2738");
           line-height: 100%;
         }
       }

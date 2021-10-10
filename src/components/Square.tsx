@@ -39,8 +39,8 @@ export function Square({
     <div
       className={cssClasses(
         "square",
-        location.row > 0 && location.row % 5 === 0 && "border-bottom",
-        location.col > 0 && location.col % 5 === 0 && "border-right"
+        location.row > 0 && location.row % 5 === 0 && "border-top",
+        location.col > 0 && location.col % 5 === 0 && "border-left"
       )}
     >
       <div

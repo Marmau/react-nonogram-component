@@ -1,20 +1,20 @@
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react'
-import { Button, IconButton, Box, Fab } from '@mui/material'
-import { useCallback, useMemo, useState } from 'react'
+import { css } from "@emotion/react"
+import { Button, IconButton, Box, Fab } from "@mui/material"
+import { useCallback, useMemo, useState } from "react"
 import {
   NonogramActions,
   NonogramGrid,
   SquareValue
-} from 'react-nonogram-component'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import RedoIcon from '@mui/icons-material/Redo'
-import ReplayIcon from '@mui/icons-material/Replay'
-import UndoIcon from '@mui/icons-material/Undo'
-import HomeIcon from '@mui/icons-material/Home'
-import qrcode from 'qrcode'
-import { useHistory, useParams } from 'react-router'
-import LZUTF8 from 'lzutf8'
+} from "react-nonogram-component"
+import VisibilityIcon from "@mui/icons-material/Visibility"
+import RedoIcon from "@mui/icons-material/Redo"
+import ReplayIcon from "@mui/icons-material/Replay"
+import UndoIcon from "@mui/icons-material/Undo"
+import HomeIcon from "@mui/icons-material/Home"
+import qrcode from "qrcode"
+import { useHistory, useParams } from "react-router"
+import LZUTF8 from "lzutf8"
 
 export function Nonogram() {
   const { base64 } = useParams<{ base64: string }>()
@@ -24,15 +24,15 @@ export function Nonogram() {
     () =>
       (
         LZUTF8.decompress(base64, {
-          inputEncoding: 'Base64',
-          outputEncoding: 'String'
+          inputEncoding: "Base64",
+          outputEncoding: "String"
         }) as string
       ).slice(0, 200),
     [base64]
   )
 
   const goHome = useCallback(() => {
-    history.push('/')
+    history.push("/")
   }, [history])
 
   const qrModules = useMemo(() => {
@@ -49,28 +49,31 @@ export function Nonogram() {
     }),
     [qrModules]
   )
-  
-  const isInGroup = useCallback((row: number, col: number) => {
-    const groupsToReveal = [
-      [0, 0, 8, 8],
-      [0, solution.cols - 8, 8, solution.cols],
-      [solution.rows - 8, 0, solution.rows, 8],
-      [0, 6, solution.rows, 7],
-      [6, 0, 7, solution.cols],
-      qrModules.size >= 25
-        ? [
-            solution.rows - 7 - 2,
-            solution.cols - 7 - 2,
-            solution.rows - 7 + 3,
-            solution.cols - 7 + 3
-          ]
-        : [0, 0, 0, 0]
-    ]
 
-    return groupsToReveal.some(
-      (g) => row >= g[0] && row < g[2] && col >= g[1] && col < g[3]
-    )
-  }, [solution, qrModules])
+  const isInGroup = useCallback(
+    (row: number, col: number) => {
+      const groupsToReveal = [
+        [0, 0, 8, 8],
+        [0, solution.cols - 8, 8, solution.cols],
+        [solution.rows - 8, 0, solution.rows, 8],
+        [0, 6, solution.rows, 7],
+        [6, 0, 7, solution.cols],
+        qrModules.size >= 25
+          ? [
+              solution.rows - 7 - 2,
+              solution.cols - 7 - 2,
+              solution.rows - 7 + 3,
+              solution.cols - 7 + 3
+            ]
+          : [0, 0, 0, 0]
+      ]
+
+      return groupsToReveal.some(
+        (g) => row >= g[0] && row < g[2] && col >= g[1] && col < g[3]
+      )
+    },
+    [solution, qrModules]
+  )
 
   const init = useMemo(
     () => ({
@@ -117,9 +120,13 @@ export function Nonogram() {
       <Box
         css={css`
           font-size: ${fontSize}px;
-          font-family: monospace;
           font-weight: 700;
           width: 90vmin;
+          padding: 5px;
+          --hint-font-family: monospace;
+          --game-board-background-color: #bbb;
+          --square-marked-symbol-color: yellow;
+          --square-marked-symbol: "\/";
         `}
       >
         <NonogramGrid
@@ -139,8 +146,8 @@ export function Nonogram() {
       >
         <Box m={1}>
           <Button
-            variant='contained'
-            color='secondary'
+            variant="contained"
+            color="secondary"
             startIcon={<UndoIcon />}
             disabled={!actions.canUndo}
             onClick={actions.undo}
@@ -150,8 +157,8 @@ export function Nonogram() {
         </Box>
         <Box m={1}>
           <Button
-            variant='contained'
-            color='secondary'
+            variant="contained"
+            color="secondary"
             startIcon={<RedoIcon />}
             disabled={!actions.canRedo}
             onClick={actions.redo}
@@ -161,8 +168,8 @@ export function Nonogram() {
         </Box>
         <Box m={1}>
           <Button
-            variant='contained'
-            color='secondary'
+            variant="contained"
+            color="secondary"
             startIcon={<ReplayIcon />}
             onClick={actions.restart}
           >
@@ -171,7 +178,7 @@ export function Nonogram() {
         </Box>
         <Box m={1}>
           <IconButton
-            color='primary'
+            color="primary"
             onMouseDown={() => actions.setGridHidden(true)}
             onMouseLeave={() => actions.setGridHidden(false)}
             onMouseUp={() => actions.setGridHidden(false)}
@@ -186,8 +193,8 @@ export function Nonogram() {
           bottom: 16px;
           right: 16px;
         `}
-        color='secondary'
-        aria-label='home'
+        color="secondary"
+        aria-label="home"
         onClick={goHome}
       >
         <HomeIcon />
