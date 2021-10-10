@@ -67,19 +67,19 @@ export function HintNumbers({ lineType }: HintNumbersProps) {
   const { goalHints } = useHints();
   const stepNumber = useRecoilValue(HistoryStepNumberAtom);
 
-  const goalHintsLines = lineType === "row" ? goalHints.rows : goalHints.cols;
+  const goalHintsLines = useMemo(() => {
+    return lineType === "row" ? goalHints.rows : goalHints.cols;
+  }, [lineType, goalHints]);
 
-  const hintGroups = useMemo(
-    () =>
-      goalHintsLines.map((hintLine, i) => (
-        <MemoLineHintNumbers
-          key={i}
-          goalHints={hintLine}
-          line={getLine(lineType, i)}
-        />
-      )),
-    [stepNumber, goalHintsLines, getLine]
-  );
+  const hintGroups = useMemo(() => {
+    return goalHintsLines.map((hintLine, i) => (
+      <MemoLineHintNumbers
+        key={i}
+        goalHints={hintLine}
+        line={getLine(lineType, i)}
+      />
+    ));
+  }, [stepNumber, goalHintsLines, getLine]);
 
   return (
     <div

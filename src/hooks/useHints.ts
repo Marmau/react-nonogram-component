@@ -1,20 +1,19 @@
 import { useCallback } from 'react'
 import { useRecoilState } from 'recoil'
 import { GoalHintsAtom } from '../utils/context'
-import { generateHints as generateHints, generateHintsFor, getCrossoutLine, getHintsCrossout } from '../utils/hints'
-import { Matrix } from '../utils/Matrix'
+import { generateHints as generateHints, getHintsCrossout } from '../utils/hints'
 import {
-  HintsCrossout, SquareValue
+  HintsCrossout
 } from '../utils/types'
 import { useBoard } from './useBoard'
 
 export function useHints() {
-  const [goalHints, setGoalHints] = useRecoilState(GoalHintsAtom)
-  const { getCurrentBoard } = useBoard()
+  const [goalHints] = useRecoilState(GoalHintsAtom)
+  const { currentBoard } = useBoard()
 
   const generateCrossout = useCallback((): HintsCrossout => {
-    return getHintsCrossout(goalHints, generateHints(getCurrentBoard()))
-  }, [goalHints, getCurrentBoard])
+    return getHintsCrossout(goalHints, generateHints(currentBoard))
+  }, [goalHints, currentBoard])
 
 
   const getProgress = useCallback((): number => {

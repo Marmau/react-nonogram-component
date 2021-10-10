@@ -2,10 +2,12 @@ import * as React from 'react'
 import { MutableSnapshot, RecoilRoot } from 'recoil'
 import {
   BoardCellAtomFamily,
+  CurrentBoardAtom,
   GoalHintsAtom,
   HistoryAtom,
   HistoryStepNumberAtom,
-  MetaMatrixAtom
+  MetaMatrixAtom,
+  WorkingBoardAtom
 } from '../utils/context'
 import { generateHints } from '../utils/hints'
 import { Matrix, MetaMatrix } from '../utils/Matrix'
@@ -56,10 +58,12 @@ function RecoilNonogramGrid({
         )
       })
 
+      set(CurrentBoardAtom, realInit)
+      set(WorkingBoardAtom, realInit)
+
       const history = [realInit] as Matrix<SquareValue>[]
 
       set(HistoryAtom, history)
-
       set(HistoryStepNumberAtom, 0)
 
       set(GoalHintsAtom, generateHints(solutionMatrix))

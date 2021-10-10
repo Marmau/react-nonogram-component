@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import { BoardCellAtomFamily } from "../utils/context";
 import { cssClasses } from "../utils/cssClasses";
@@ -26,11 +26,11 @@ export function Square({
     onSquareMouseLeave(location);
   }, [onSquareMouseLeave, location]);
 
-  const cssClassState = {
+  const cssClassState = useMemo(() => ({
     [SquareValue.EMPTY]: "empty",
     [SquareValue.MARKED]: "marked",
     [SquareValue.FILLED]: "filled",
-  };
+  }), []);
 
   return (
     <div

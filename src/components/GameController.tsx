@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect } from "react";
 import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
+import { useBoard } from "../hooks/useBoard";
 import { useHistory } from "../hooks/useHistory";
 import { useMouse } from "../hooks/useMouse";
 import {
   BoardCellAtomFamily,
+  CurrentBoardAtom,
   IsGridHiddenAtom,
   MetaMatrixAtom,
+  WorkingBoardAtom,
 } from "../utils/context";
 import { cssClasses } from "../utils/cssClasses";
 import { Matrix } from "../utils/Matrix";
@@ -66,6 +69,9 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
       () => {
         if (lastMousePosition && mouseButton !== "none") {
           set(BoardCellAtomFamily(lastMousePosition.index), mouseSquareValue);
+          set(WorkingBoardAtom, (matrix) =>
+            matrix.setAt(lastMousePosition.index, mouseSquareValue)
+          );
         }
       },
     [mouseButton, lastMousePosition]

@@ -10,11 +10,7 @@ export class Matrix<T> {
     public readonly metaMatrix: MetaMatrix
   ) {}
 
-  public set(location: CellLocation, newValue: T): Matrix<T> {
-    return this.setIndex(location.index, newValue)
-  }
-
-  public setIndex(index: number, newValue: T): Matrix<T> {
+  public setAt(index: number, newValue: T): Matrix<T> {
     const newMatrix = this.clone()
     newMatrix._values[index] = newValue
 

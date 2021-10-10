@@ -6,7 +6,7 @@ import { MouseButton, SquareValue } from "../utils/types"
 import { useBoard } from "./useBoard"
 
 export function useMouse() {
-  const { getCurrentBoard } = useBoard()
+  const { currentBoard } = useBoard()
   const [mouseButton, setMouseButton] =
     useRecoilState<MouseButton>(MouseButtonAtom)
 
@@ -20,8 +20,8 @@ export function useMouse() {
 
   const onMouseDown = useCallback(
     (event: React.MouseEvent) => {
-      const lastPositionSquareValue = getCurrentBoard().at(lastMousePosition?.index ?? 0)
-      setMouseSquareValue(getCurrentBoard().at(lastMousePosition?.index ?? 0))
+      const lastPositionSquareValue = currentBoard.at(lastMousePosition?.index ?? 0)
+      setMouseSquareValue(currentBoard.at(lastMousePosition?.index ?? 0))
       
       if (event.button === 0 && event.type === "mousedown") {
         setMouseButton("left")
@@ -39,7 +39,7 @@ export function useMouse() {
         }
       }
     },
-    [setMouseButton, getCurrentBoard, setMouseSquareValue, lastMousePosition]
+    [setMouseButton, currentBoard, setMouseSquareValue, lastMousePosition]
   )
 
   const onMouseUp = useCallback(

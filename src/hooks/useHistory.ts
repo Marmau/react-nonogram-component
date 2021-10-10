@@ -1,13 +1,13 @@
-import { useCallback } from 'react'
-import { useRecoilState } from 'recoil'
-import { HistoryAtom, HistoryStepNumberAtom } from '../utils/context'
-import { useBoard } from './useBoard'
+import { useCallback, useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { HistoryAtom, HistoryStepNumberAtom } from "../utils/context";
+import { useBoard } from "./useBoard";
 
 export function useHistory() {
-  const { resetBoard, getCurrentBoard } = useBoard()
+  const { resetBoard, workingBoard, updateCurrentBoard } = useBoard();
 
-  const [history, setHistory] = useRecoilState(HistoryAtom)
-  const [stepNumber, setStepNumber] = useRecoilState(HistoryStepNumberAtom)
+  const [history, setHistory] = useRecoilState(HistoryAtom);
+  const [stepNumber, setStepNumber] = useRecoilState(HistoryStepNumberAtom);
 
   /*
    * Append current board state to history of board states.
@@ -20,14 +20,12 @@ export function useHistory() {
    * dragged over multiple squares.
    */
   const appendToHistory = useCallback(() => {
-    const board = getCurrentBoard()
-    // const newHistory = history.slice(0, stepNumber + 1)
-
-    if (!board.equals(history[history.length - 1])) {
-      setHistory(history.concat(board))
-      setStepNumber(history.length)
+    if (!workingBoard.equals(history[history.length - 1])) {
+      setHistory(history.concat(workingBoard));
+      setStepNumber(history.length);
+      updateCurrentBoard();
     }
-  }, [setHistory, setStepNumber, history, stepNumber, getCurrentBoard])
+  }, [setHistory, setStepNumber, history, workingBoard, updateCurrentBoard]);
 
   /**
    * Undo the most recent action.
@@ -37,30 +35,30 @@ export function useHistory() {
    * in front of the current action in the action history.
    */
   const undoAction = useCallback(() => {
-    if (stepNumber === 0) return
+    if (stepNumber === 0) return;
 
-    resetBoard(history[stepNumber - 1])
-    setStepNumber(stepNumber - 1)
-  }, [history, resetBoard, stepNumber, setStepNumber])
+    resetBoard(history[stepNumber - 1]);
+    setStepNumber(stepNumber - 1);
+  }, [history, resetBoard, stepNumber, setStepNumber]);
 
   const redoAction = useCallback(() => {
-    if (stepNumber === history.length - 1) return
+    if (stepNumber === history.length - 1) return;
 
-    resetBoard(history[stepNumber + 1])
-    setStepNumber(stepNumber + 1)
-  }, [history, resetBoard, stepNumber, setStepNumber])
+    resetBoard(history[stepNumber + 1]);
+    setStepNumber(stepNumber + 1);
+  }, [history, resetBoard, stepNumber, setStepNumber]);
 
   const resetHistory = useCallback(() => {
-    resetBoard(history[0])
-    setHistory([history[0]])
-    setStepNumber(0)
-  }, [setHistory, resetBoard, setStepNumber, history])
+    resetBoard(history[0]);
+    setHistory([history[0]]);
+    setStepNumber(0);
+  }, [setHistory, resetBoard, setStepNumber, history]);
 
-  const canUndo = useCallback(() => stepNumber > 0, [stepNumber])
+  const canUndo = useCallback(() => stepNumber > 0, [stepNumber]);
   const canRedo = useCallback(
     () => stepNumber < history.length - 1,
     [stepNumber, history]
-  )
+  );
 
   return {
     stepNumber,
@@ -71,6 +69,6 @@ export function useHistory() {
     resetHistory,
     canUndo: canUndo(),
     canRedo: canRedo(),
-    historySize: history.length
-  }
+    historySize: history.length,
+  };
 }
