@@ -4,6 +4,11 @@ export interface CellLocation {
   col: number
 }
 
+export interface Cell<T> {
+  index: number
+  value: T
+}
+
 export class Matrix<T> {
   constructor(
     private readonly _values: T[],
@@ -27,19 +32,23 @@ export class Matrix<T> {
   }
 
   public getRow(i: number): T[] {
-    return this.metaMatrix.row(i).map(location => this.at(location.index))
+    return this.metaMatrix.row(i).map((location) => this.at(location.index))
   }
 
   public getRows(): T[][] {
-    return Array.from(Array(this.metaMatrix.rows).keys()).map((i) => this.getRow(i))
+    return Array.from(Array(this.metaMatrix.rows).keys()).map((i) =>
+      this.getRow(i)
+    )
   }
-  
+
   public getCol(i: number): T[] {
-    return this.metaMatrix.col(i).map(location => this.at(location.index))
+    return this.metaMatrix.col(i).map((location) => this.at(location.index))
   }
 
   public getCols(): T[][] {
-    return Array.from(Array(this.metaMatrix.cols).keys()).map((i) => this.getCol(i))
+    return Array.from(Array(this.metaMatrix.cols).keys()).map((i) =>
+      this.getCol(i)
+    )
   }
 
   public clone() {
@@ -68,11 +77,11 @@ export class Matrix<T> {
 
   public toString() {
     return `${this.metaMatrix.cols}${this.metaMatrix.rows}${this._values.join(
-      ''
+      ""
     )}`
   }
 }
- 
+
 export type MatrixLine = CellLocation[]
 
 export class MetaMatrix {
@@ -93,11 +102,15 @@ export class MetaMatrix {
   }
 
   public col(c: number): MatrixLine {
-    return Array.from(Array(this.rows).keys()).map((i) => this.index(c + this.cols * i))
+    return Array.from(Array(this.rows).keys()).map((i) =>
+      this.index(c + this.cols * i)
+    )
   }
 
   public row(r: number): MatrixLine {
-    return Array.from(Array(this.cols).keys()).map((i) => this.index(i + this.cols * r))
+    return Array.from(Array(this.cols).keys()).map((i) =>
+      this.index(i + this.cols * r)
+    )
   }
 
   public allRows(): MatrixLine[] {

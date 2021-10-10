@@ -1,16 +1,16 @@
-import { useCallback } from "react";
-import { useRecoilCallback, useRecoilState } from "recoil";
+import { useCallback } from "react"
+import { useRecoilCallback, useRecoilState } from "recoil"
 import {
   BoardCellAtomFamily,
   CurrentBoardAtom,
-  WorkingBoardAtom,
-} from "../utils/context";
-import { Matrix } from "../utils/Matrix";
-import { LineType, SquareValue } from "../utils/types";
+  WorkingBoardAtom
+} from "../utils/context"
+import { Matrix } from "../utils/Matrix"
+import { LineType, SquareValue } from "../utils/types"
 
 export function useBoard() {
-  const [currentBoard, setCurrentBoard] = useRecoilState(CurrentBoardAtom);
-  const [workingBoard, setWorkingBoard] = useRecoilState(WorkingBoardAtom);
+  const [currentBoard, setCurrentBoard] = useRecoilState(CurrentBoardAtom)
+  const [workingBoard, setWorkingBoard] = useRecoilState(WorkingBoardAtom)
 
   const resetBoard = useRecoilCallback(
     ({ set }) =>
@@ -19,32 +19,32 @@ export function useBoard() {
           set(
             BoardCellAtomFamily(location.index),
             matrix.at(location.index) ?? SquareValue.EMPTY
-          );
-          setWorkingBoard(matrix);
-          setCurrentBoard(matrix);
-        });
+          )
+          setWorkingBoard(matrix)
+          setCurrentBoard(matrix)
+        })
       },
     []
-  );
+  )
 
   const updateCurrentBoard = useCallback(() => {
-    setCurrentBoard(workingBoard);
-  }, [workingBoard]);
+    setCurrentBoard(workingBoard)
+  }, [workingBoard])
 
   const getBoardLine = useCallback(
     (lineType: LineType, index: number) => {
       return lineType === "row"
         ? currentBoard.getRow(index)
-        : currentBoard.getCol(index);
+        : currentBoard.getCol(index)
     },
     [currentBoard]
-  );
+  )
 
   return {
     resetBoard,
     currentBoard,
     workingBoard,
     updateCurrentBoard,
-    getLine: getBoardLine,
-  };
+    getLine: getBoardLine
+  }
 }

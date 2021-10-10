@@ -1,34 +1,31 @@
-import React, { useCallback, useEffect } from "react";
-import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
-import { useBoard } from "../hooks/useBoard";
-import { useHistory } from "../hooks/useHistory";
-import { useMouse } from "../hooks/useMouse";
+import React, { useCallback, useEffect } from "react"
+import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil"
+import { useHistory } from "../hooks/useHistory"
+import { useMouse } from "../hooks/useMouse"
 import {
-  BoardCellAtomFamily,
-  CurrentBoardAtom,
-  IsGridHiddenAtom,
+  BoardCellAtomFamily, IsGridHiddenAtom,
   MetaMatrixAtom,
-  WorkingBoardAtom,
-} from "../utils/context";
-import { cssClasses } from "../utils/cssClasses";
-import { Matrix } from "../utils/Matrix";
-import { NonogramActions, SquareValue } from "../utils/types";
-import { GameBoard } from "./GameBoard";
-import { HintNumbers } from "./HintNumbers";
-import { gameControllerStyles } from "./styles";
+  WorkingBoardAtom
+} from "../utils/context"
+import { cssClasses } from "../utils/cssClasses"
+import { Matrix } from "../utils/Matrix"
+import { NonogramActions, SquareValue } from "../utils/types"
+import { GameBoard } from "./GameBoard"
+import { HintNumbers } from "./HintNumbers"
+import { gameControllerStyles } from "./styles"
 
 export interface GameControllerProps {
-  solution: Matrix<SquareValue>;
-  onRefresh: (nonogramActions: NonogramActions) => void;
+  solution: Matrix<SquareValue>
+  onRefresh: (nonogramActions: NonogramActions) => void
 }
 
-export const MemoBoard = React.memo(GameBoard);
-export const MemoHintNumbers = React.memo(HintNumbers);
+export const MemoBoard = React.memo(GameBoard)
+export const MemoHintNumbers = React.memo(HintNumbers)
 
 export function GameController({ solution, onRefresh }: GameControllerProps) {
-  const metaMatrix = useRecoilValue(MetaMatrixAtom);
+  const metaMatrix = useRecoilValue(MetaMatrixAtom)
 
-  const [isGridHidden, setGridHidden] = useRecoilState(IsGridHiddenAtom);
+  const [isGridHidden, setGridHidden] = useRecoilState(IsGridHiddenAtom)
 
   const {
     resetHistory,
@@ -36,8 +33,8 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
     undoAction,
     redoAction,
     canUndo,
-    canRedo,
-  } = useHistory();
+    canRedo
+  } = useHistory()
 
   const {
     onMouseDown,
@@ -46,40 +43,40 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
     mouseSquareValue,
     lastMousePosition,
     onSquareMouseEnter,
-    onSquareMouseLeave,
-  } = useMouse();
+    onSquareMouseLeave
+  } = useMouse()
 
   const onBoardMouseUp = useCallback(
     (event: React.MouseEvent) => {
-      onMouseUp(event);
-      appendToHistory();
+      onMouseUp(event)
+      appendToHistory()
     },
     [onMouseUp, appendToHistory]
-  );
+  )
 
   const onBoardMouseDown = useCallback(
     (event: React.MouseEvent) => {
-      onMouseDown(event);
+      onMouseDown(event)
     },
     [onMouseDown]
-  );
+  )
 
   const updateSquare = useRecoilCallback(
     ({ set }) =>
       () => {
         if (lastMousePosition && mouseButton !== "none") {
-          set(BoardCellAtomFamily(lastMousePosition.index), mouseSquareValue);
+          set(BoardCellAtomFamily(lastMousePosition.index), mouseSquareValue)
           set(WorkingBoardAtom, (matrix) =>
             matrix.setAt(lastMousePosition.index, mouseSquareValue)
-          );
+          )
         }
       },
     [mouseButton, lastMousePosition]
-  );
+  )
 
   useEffect(() => {
-    updateSquare();
-  }, [updateSquare]);
+    updateSquare()
+  }, [updateSquare])
 
   useEffect(() => {
     onRefresh({
@@ -89,8 +86,8 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
       undo: undoAction,
       redo: redoAction,
       restart: resetHistory,
-      reset: (matrix: SquareValue[][]) => {},
-    });
+      reset: (matrix: SquareValue[][]) => {}
+    })
   }, [
     onRefresh,
     canUndo,
@@ -98,8 +95,8 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
     setGridHidden,
     undoAction,
     redoAction,
-    resetHistory,
-  ]);
+    resetHistory
+  ])
 
   return (
     <div
@@ -123,5 +120,5 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
         />
       </div>
     </div>
-  );
+  )
 }

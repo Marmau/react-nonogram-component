@@ -1,4 +1,4 @@
-import { css } from "@emotion/css";
+import { css } from "@emotion/css"
 
 export const gameControllerStyles = css`
   display: grid;
@@ -223,4 +223,4 @@ export const gameControllerStyles = css`
       }
     }
   }
-`;
+`

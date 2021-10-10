@@ -1,26 +1,26 @@
-import React, { memo, useMemo } from "react";
-import { useRecoilValue } from "recoil";
-import { useBoard } from "../hooks/useBoard";
-import { useHints } from "../hooks/useHints";
-import { HistoryStepNumberAtom } from "../utils/context";
-import { cssClasses } from "../utils/cssClasses";
-import { generateCrossoutFor } from "../utils/hints";
-import { LineType, SquareValue } from "../utils/types";
+import React, { memo, useMemo } from "react"
+import { useRecoilValue } from "recoil"
+import { useBoard } from "../hooks/useBoard"
+import { useHints } from "../hooks/useHints"
+import { HistoryStepNumberAtom } from "../utils/context"
+import { cssClasses } from "../utils/cssClasses"
+import { generateCrossoutFor } from "../utils/hints"
+import { LineType, SquareValue } from "../utils/types"
 
 export interface HintNumbersProps {
-  lineType: LineType;
+  lineType: LineType
 }
 
 function LineHintNumbers({
   line,
-  goalHints,
+  goalHints
 }: {
-  line: SquareValue[];
-  goalHints: number[];
+  line: SquareValue[]
+  goalHints: number[]
 }) {
   const crossout = useMemo(() => {
-    return generateCrossoutFor(line, goalHints);
-  }, [line, goalHints]);
+    return generateCrossoutFor(line, goalHints)
+  }, [line, goalHints])
 
   return (
     <div
@@ -40,15 +40,15 @@ function LineHintNumbers({
         ))}
       </div>
     </div>
-  );
+  )
 }
 
 const MemoLineHintNumbers = memo(LineHintNumbers, (prev, next) => {
   return (
     prev.line.join("") === next.line.join("") &&
     prev.goalHints.join("") === next.goalHints.join("")
-  );
-});
+  )
+})
 
 /**
  * Translates either row or column hint numbers into HTML div elements.
@@ -63,13 +63,13 @@ const MemoLineHintNumbers = memo(LineHintNumbers, (prev, next) => {
  *
  */
 export function HintNumbers({ lineType }: HintNumbersProps) {
-  const { getLine } = useBoard();
-  const { goalHints } = useHints();
-  const stepNumber = useRecoilValue(HistoryStepNumberAtom);
+  const { getLine } = useBoard()
+  const { goalHints } = useHints()
+  const stepNumber = useRecoilValue(HistoryStepNumberAtom)
 
   const goalHintsLines = useMemo(() => {
-    return lineType === "row" ? goalHints.rows : goalHints.cols;
-  }, [lineType, goalHints]);
+    return lineType === "row" ? goalHints.rows : goalHints.cols
+  }, [lineType, goalHints])
 
   const hintGroups = useMemo(() => {
     return goalHintsLines.map((hintLine, i) => (
@@ -78,8 +78,8 @@ export function HintNumbers({ lineType }: HintNumbersProps) {
         goalHints={hintLine}
         line={getLine(lineType, i)}
       />
-    ));
-  }, [stepNumber, goalHintsLines, getLine]);
+    ))
+  }, [stepNumber, goalHintsLines, getLine])
 
   return (
     <div
@@ -90,5 +90,5 @@ export function HintNumbers({ lineType }: HintNumbersProps) {
     >
       {hintGroups}
     </div>
-  );
+  )
 }
