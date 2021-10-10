@@ -1,51 +1,31 @@
-/** @jsxImportSource @emotion/react */
-import { css, jsx } from '@emotion/react'
-import React, {
-  useCallback,
-  useEffect
-} from 'react'
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil'
-import { useHistory } from '../hooks/useHistory'
-import { useMouse } from '../hooks/useMouse'
+import React, { useCallback, useEffect } from "react";
+import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
+import { useHistory } from "../hooks/useHistory";
+import { useMouse } from "../hooks/useMouse";
 import {
   BoardCellAtomFamily,
   IsGridHiddenAtom,
-  MetaMatrixAtom
-} from '../utils/context'
-import { Matrix } from '../utils/Matrix'
-import { NonogramActions, SquareValue } from '../utils/types'
-import { GameBoard } from './GameBoard'
-import { HintNumbers } from './HintNumbers'
-
+  MetaMatrixAtom,
+} from "../utils/context";
+import { cssClasses } from "../utils/cssClasses";
+import { Matrix } from "../utils/Matrix";
+import { NonogramActions, SquareValue } from "../utils/types";
+import { GameBoard } from "./GameBoard";
+import { HintNumbers } from "./HintNumbers";
+import { gameControllerStyles } from "./styles";
 
 export interface GameControllerProps {
-  solution: Matrix<SquareValue>
-  onRefresh: (nonogramActions: NonogramActions) => void
+  solution: Matrix<SquareValue>;
+  onRefresh: (nonogramActions: NonogramActions) => void;
 }
 
-const cssGame = css`
-  display: grid;
-  grid-auto-columns: min-content;
-  color: #353235;
-  user-select: none;
-  cursor: default;
-  grid-template-areas:
-    '. col-hints'
-    'row-hints board';
-
-  grid-template-rows: min-content 1fr;
-  grid-template-columns: min-content 1fr;
-  width: calc(100% - 5px);
-  padding: 5px;
-`
-
-export const MemoBoard = React.memo(GameBoard)
-export const MemoHintNumbers = React.memo(HintNumbers)
+export const MemoBoard = React.memo(GameBoard);
+export const MemoHintNumbers = React.memo(HintNumbers);
 
 export function GameController({ solution, onRefresh }: GameControllerProps) {
-  const metaMatrix = useRecoilValue(MetaMatrixAtom)
+  const metaMatrix = useRecoilValue(MetaMatrixAtom);
 
-  const setGridHidden = useSetRecoilState(IsGridHiddenAtom)
+  const [isGridHidden, setGridHidden] = useRecoilState(IsGridHiddenAtom);
 
   const {
     resetHistory,
@@ -53,8 +33,8 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
     undoAction,
     redoAction,
     canUndo,
-    canRedo
-  } = useHistory()
+    canRedo,
+  } = useHistory();
 
   const {
     onMouseDown,
@@ -63,37 +43,37 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
     mouseSquareValue,
     lastMousePosition,
     onSquareMouseEnter,
-    onSquareMouseLeave
-  } = useMouse()
+    onSquareMouseLeave,
+  } = useMouse();
 
   const onBoardMouseUp = useCallback(
     (event: React.MouseEvent) => {
-      onMouseUp(event)
-      appendToHistory()
+      onMouseUp(event);
+      appendToHistory();
     },
     [onMouseUp, appendToHistory]
-  )
+  );
 
   const onBoardMouseDown = useCallback(
     (event: React.MouseEvent) => {
-      onMouseDown(event)
+      onMouseDown(event);
     },
     [onMouseDown]
-  )
+  );
 
   const updateSquare = useRecoilCallback(
     ({ set }) =>
       () => {
-        if (lastMousePosition && mouseButton !== 'none') {
-          set(BoardCellAtomFamily(lastMousePosition.index), mouseSquareValue)
+        if (lastMousePosition && mouseButton !== "none") {
+          set(BoardCellAtomFamily(lastMousePosition.index), mouseSquareValue);
         }
       },
     [mouseButton, lastMousePosition]
-  )
+  );
 
   useEffect(() => {
-    updateSquare()
-  }, [updateSquare])
+    updateSquare();
+  }, [updateSquare]);
 
   useEffect(() => {
     onRefresh({
@@ -103,8 +83,8 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
       undo: undoAction,
       redo: redoAction,
       restart: resetHistory,
-      reset: (matrix: SquareValue[][]) => {}
-    })
+      reset: (matrix: SquareValue[][]) => {},
+    });
   }, [
     onRefresh,
     canUndo,
@@ -112,18 +92,21 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
     setGridHidden,
     undoAction,
     redoAction,
-    resetHistory
-  ])
+    resetHistory,
+  ]);
 
   return (
-    <div onContextMenu={(e) => e.preventDefault()} css={cssGame}>
-      <div css={{ gridArea: 'col-hints' }}>
-        <MemoHintNumbers lineType='col' />
+    <div
+      onContextMenu={(e) => e.preventDefault()}
+      className={cssClasses(gameControllerStyles, isGridHidden && "hide-grid")}
+    >
+      <div className="area-col-hints">
+        <MemoHintNumbers lineType="col" />
       </div>
-      <div css={{ gridArea: 'row-hints' }}>
-        <MemoHintNumbers lineType='row' />
+      <div className="area-row-hints">
+        <MemoHintNumbers lineType="row" />
       </div>
-      <div css={{ gridArea: 'board' }}>
+      <div className="area-board">
         <MemoBoard
           metaMatrix={metaMatrix}
           onBoardMouseUp={onBoardMouseUp}
@@ -134,5 +117,5 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
         />
       </div>
     </div>
-  )
+  );
 }

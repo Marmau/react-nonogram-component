@@ -1,52 +1,47 @@
-/** @jsxImportSource @emotion/react */
-import { css, jsx } from '@emotion/react'
-import React from 'react'
-import { useRecoilValue } from 'recoil'
-import { IsGridHiddenAtom } from '../utils/context'
-import { cssClasses } from '../utils/cssClasses'
-import { CellLocation, MetaMatrix } from '../utils/Matrix'
-import { Square } from './Square'
+import React from "react";
+import { CellLocation, MetaMatrix } from "../utils/Matrix";
+import { Square } from "./Square";
 
 export interface BoardProps {
-  metaMatrix: MetaMatrix
-  onBoardMouseUp: (event: React.MouseEvent) => void
-  onBoardMouseDown: (event: React.MouseEvent) => void
-  onBoardMouseLeave: (event: React.MouseEvent) => void
-  onSquareMouseEnter: (location: CellLocation) => void
-  onSquareMouseLeave: (location: CellLocation) => void
+  metaMatrix: MetaMatrix;
+  onBoardMouseUp: (event: React.MouseEvent) => void;
+  onBoardMouseDown: (event: React.MouseEvent) => void;
+  onBoardMouseLeave: (event: React.MouseEvent) => void;
+  onSquareMouseEnter: (location: CellLocation) => void;
+  onSquareMouseLeave: (location: CellLocation) => void;
 }
 
 type InnerBoardProps = Omit<
   BoardProps,
-  'onBoardMouseUp' | 'onBoardMouseDown' | 'onBoardMouseLeave'
->
+  "onBoardMouseUp" | "onBoardMouseDown" | "onBoardMouseLeave"
+>;
 
-const cssGameBoard = css`
-  display: flex;
-  flex-direction: column;
-  background-color: #bbb;
-  width: auto;
-  box-shadow: 0px 0px 0px 4px #bbb;
-  transition: background-color 0.2s ease;
+// const cssGameBoard = css`
+//   display: flex;
+//   flex-direction: column;
+//   background-color: #bbb;
+//   width: auto;
+//   box-shadow: 0px 0px 0px 4px #bbb;
+//   transition: background-color 0.2s ease;
 
-  &.hide-grid {
-    background-color: transparent;
-    box-shadow: 0px 0px 0px 5px transparent;
-  }
+//   &.hide-grid {
+//     background-color: transparent;
+//     box-shadow: 0px 0px 0px 5px transparent;
+//   }
 
-  .board-row {
-    display: flex;
-    flex-flow: row;
-    justify-content: center;
-  }
-`
+//   .board-row {
+//     display: flex;
+//     flex-flow: row;
+//     justify-content: center;
+//   }
+// `
 
 function InnerBoard(props: InnerBoardProps) {
   return (
     <React.Fragment>
       {props.metaMatrix.allRows().map((row, i) => {
         return (
-          <div key={i} className='board-row'>
+          <div key={i} className="board-row">
             {row.map((location) => {
               return (
                 <Square
@@ -55,27 +50,24 @@ function InnerBoard(props: InnerBoardProps) {
                   onSquareMouseEnter={props.onSquareMouseEnter}
                   onSquareMouseLeave={props.onSquareMouseLeave}
                 />
-              )
+              );
             })}
           </div>
-        )
+        );
       })}
     </React.Fragment>
-  )
+  );
 }
 
-const MemoInnerBoard = React.memo(InnerBoard)
+const MemoInnerBoard = React.memo(InnerBoard);
 
 /**
  * A game board made up of squares.
  */
 export function GameBoard(props: BoardProps) {
-  const isGridHidden = useRecoilValue(IsGridHiddenAtom)
-
   return (
     <div
-      css={cssGameBoard}
-      className={cssClasses(isGridHidden && 'hide-grid')}
+      className="game-board"
       onMouseUp={props.onBoardMouseUp}
       onMouseDown={props.onBoardMouseDown}
       onMouseLeave={props.onBoardMouseLeave}
@@ -86,5 +78,5 @@ export function GameBoard(props: BoardProps) {
         onSquareMouseLeave={props.onSquareMouseLeave}
       />
     </div>
-  )
+  );
 }
