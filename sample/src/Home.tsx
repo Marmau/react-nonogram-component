@@ -1,4 +1,4 @@
-import { Box, Button, Container, TextField } from '@mui/material'
+import { Box, Button, Container, TextField, Typography } from '@mui/material'
 import LZUTF8 from 'lzutf8'
 import { useCallback, useEffect, useState } from 'react'
 import AppsIcon from '@mui/icons-material/Apps'
@@ -31,12 +31,14 @@ export function Home() {
 
   return (
     <Container maxWidth='xl'>
-      <>
+      <Typography m={2}>Create a qrcode-nonogram based on the text below.</Typography>
+
+      <form onSubmit={goNono}>
         <Box m={2}>
           <TextField
             label='Text to discover'
             value={text}
-            multiline
+            variant="filled"
             inputProps={{ maxLength: 200 }}
             onChange={handleChange}
             fullWidth={true}
@@ -46,13 +48,13 @@ export function Home() {
           <Button
             disabled={text.length === 0}
             startIcon={<AppsIcon />}
-            onClick={goNono}
+            type="submit"
             variant='contained'
           >
             Generate nonogram
           </Button>
         </Box>
-      </>
+      </form>
     </Container>
   )
 }

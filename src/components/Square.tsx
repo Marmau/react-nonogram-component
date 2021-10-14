@@ -1,9 +1,8 @@
-import React, { useCallback, useMemo } from "react"
+import React, { useCallback } from "react"
 import { useRecoilValue } from "recoil"
 import { BoardCellAtomFamily } from "../utils/context"
 import { cssClasses } from "../utils/cssClasses"
 import { CellLocation } from "../utils/Matrix"
-import { SquareValue } from "../utils/types"
 
 export interface SquareProps {
   location: CellLocation
