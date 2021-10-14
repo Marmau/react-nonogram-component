@@ -4,7 +4,7 @@
 
 This is a React component to display a Nonogram grid from the solution. Hints are automatically computed, and updated depending on the player moves.
 
-![Nonogram](illustration-img)
+![Nonogram][illustration-img]
 
 **Demo:** https://qrcode-nonogram.netlify.app/
 
