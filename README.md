@@ -22,6 +22,8 @@ You need React > 17 in your dependencies.
 ### Example
 
 ```typescript
+import { NonogramGrid } from "react-nonogram-component"
+
 const solution = {
     rows: 2,
     cols: 2,
