@@ -15,8 +15,8 @@ import { NonogramGridInput, SquareValue, NonogramActions } from '../utils/types'
 import { GameController } from './GameController'
 
 interface NonogramGridProps {
-  solution: NonogramGridInput<boolean | SquareValue.FILLED | SquareValue.EMPTY>
-  init?: NonogramGridInput<SquareValue>
+  solution: NonogramGridInput<boolean | 'filled' | 'empty'>
+  init?: SquareValue[]
   onRefresh?: (nonogramActions: NonogramActions) => void
 }
 
@@ -29,7 +29,7 @@ function RecoilNonogramGrid({
     return new Matrix(
       solution.values.map((elem) => {
         if (typeof elem === 'boolean') {
-          return elem ? SquareValue.FILLED : SquareValue.EMPTY
+          return elem ? 'filled' : 'empty'
         } else {
           return elem
         }
@@ -40,7 +40,7 @@ function RecoilNonogramGrid({
 
   const initMatrix = React.useMemo(() => {
     return init
-      ? new Matrix(init.values, new MetaMatrix(solution.rows, solution.cols))
+      ? new Matrix(init, new MetaMatrix(solution.rows, solution.cols))
       : undefined
   }, [init])
 
@@ -49,12 +49,12 @@ function RecoilNonogramGrid({
       const { metaMatrix } = solutionMatrix
       set(MetaMatrixAtom, metaMatrix)
 
-      const realInit = initMatrix ?? Matrix.init(metaMatrix, SquareValue.EMPTY)
+      const realInit = initMatrix ?? Matrix.init(metaMatrix, 'empty')
 
       metaMatrix.all().forEach((location) => {
         set(
           BoardCellAtomFamily(location.index),
-          realInit.at(location.index) ?? SquareValue.EMPTY
+          realInit.at(location.index) ?? 'empty'
         )
       })
 

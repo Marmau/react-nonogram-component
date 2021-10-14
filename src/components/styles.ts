@@ -196,7 +196,7 @@ export const gameControllerStyles = css`
         cursor: pointer;
       }
 
-      transition: background-color 0.2s ease, color 0.2s;
+      transition: background-color 0.4s ease, color 0.4s;
 
       &::after {
         transform: scale(0);
@@ -213,7 +213,7 @@ export const gameControllerStyles = css`
       &.marked {
         background-color: var(--square-marked-background-color, #fff);
         color: var(--square-marked-symbol-color, #bbb);
-        transition: color 0.2s;
+        transition: color 0.4s;
 
         &::before {
           content: var(--square-marked-symbol, "\\2738");

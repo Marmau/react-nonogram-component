@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from "react"
 import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil"
+import { useBoard } from "../hooks/useBoard"
 import { useHistory } from "../hooks/useHistory"
 import { useMouse } from "../hooks/useMouse"
 import {
@@ -8,7 +9,7 @@ import {
   WorkingBoardAtom
 } from "../utils/context"
 import { cssClasses } from "../utils/cssClasses"
-import { Matrix } from "../utils/Matrix"
+import { Matrix, MetaMatrix } from "../utils/Matrix"
 import { NonogramActions, SquareValue } from "../utils/types"
 import { GameBoard } from "./GameBoard"
 import { HintNumbers } from "./HintNumbers"
@@ -27,6 +28,8 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
 
   const [isGridHidden, setGridHidden] = useRecoilState(IsGridHiddenAtom)
 
+  const { resetBoard, currentBoard, updateCurrentBoard } = useBoard()
+ 
   const {
     resetHistory,
     appendToHistory,
@@ -49,6 +52,7 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
   const onBoardMouseUp = useCallback(
     (event: React.MouseEvent) => {
       onMouseUp(event)
+      // updateCurrentBoard()
       appendToHistory()
     },
     [onMouseUp, appendToHistory]
@@ -86,7 +90,11 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
       undo: undoAction,
       redo: redoAction,
       restart: resetHistory,
-      reset: (matrix: SquareValue[][]) => {}
+      nextState: (grid: SquareValue[]) => {
+        resetBoard(new Matrix(grid, metaMatrix))
+        appendToHistory()
+      },
+      getCurrentBoard: () => currentBoard.values
     })
   }, [
     onRefresh,
@@ -95,7 +103,10 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
     setGridHidden,
     undoAction,
     redoAction,
-    resetHistory
+    resetHistory,
+    resetBoard,
+    appendToHistory,
+    currentBoard
   ])
 
   return (

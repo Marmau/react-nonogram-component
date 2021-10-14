@@ -56,11 +56,7 @@ export interface NonogramGridInput {
 `init`: initial grid displayed to the player
 
 ```typescript
-export interface NonogramGridInput {
-    values: (SquareValue.EMPTY | SquareValue.FILLED | SquareValue.MARKED)[]; // 1D array with all square values
-    rows: number; // number of rows
-    cols: number; // number of cols
-}
+type Init = (SquareValue.EMPTY | SquareValue.FILLED | SquareValue.MARKED)[]; // 1D array with all square values
 ```
 
 `onRefresh`: Event function: called each time the nonogram is refreshed. It allows the developer to interact with the grid.
@@ -75,7 +71,7 @@ export interface NonogramActions {
     redo: () => void; // redo the last move
     restart: () => void; // restart the game
     setGridHidden: (hidden: boolean) => void; // hide the borders of the grid
-    reset: (matrix: SquareValue[][]) => void; // reset the grid to a state
+    reset: (grid: SquareValue[]) => void; // reset the grid to a state (1D array with all square values)
 }
 ```
 

@@ -13,7 +13,7 @@ export function generateHintsFor(line: SquareValue[]): number[] {
   const hints = line.reduce(
     (previous, current) => {
       const lastPrevious = last(previous)
-      if (current === SquareValue.FILLED) {
+      if (current === 'filled') {
         return [...withoutLast(previous), lastPrevious + 1]
       } else if (lastPrevious) {
         return [...previous, 0]

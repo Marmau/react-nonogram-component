@@ -18,18 +18,18 @@ export function useBoard() {
         matrix.metaMatrix.all().forEach((location) => {
           set(
             BoardCellAtomFamily(location.index),
-            matrix.at(location.index) ?? SquareValue.EMPTY
+            matrix.at(location.index) ?? 'empty'
           )
           setWorkingBoard(matrix)
           setCurrentBoard(matrix)
         })
       },
-    []
+    [setWorkingBoard, setCurrentBoard]
   )
 
   const updateCurrentBoard = useCallback(() => {
     setCurrentBoard(workingBoard)
-  }, [workingBoard])
+  }, [setCurrentBoard, workingBoard])
 
   const getBoardLine = useCallback(
     (lineType: LineType, index: number) => {

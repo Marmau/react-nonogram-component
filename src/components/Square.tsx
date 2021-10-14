@@ -26,14 +26,6 @@ export function Square({
     onSquareMouseLeave(location)
   }, [onSquareMouseLeave, location])
 
-  const cssClassState = useMemo(
-    () => ({
-      [SquareValue.EMPTY]: "empty",
-      [SquareValue.MARKED]: "marked",
-      [SquareValue.FILLED]: "filled"
-    }),
-    []
-  )
 
   return (
     <div
@@ -46,7 +38,7 @@ export function Square({
       <div
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        className={cssClasses("inner-square", cssClassState[cellState])}
+        className={cssClasses("inner-square", cellState)}
       ></div>
     </div>
   )

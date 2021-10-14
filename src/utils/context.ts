@@ -14,7 +14,7 @@ export const MetaMatrixAtom = atom<MetaMatrix>({
 
 export const BoardCellAtomFamily = atomFamily<SquareValue, number>({
   key: "BoardCellAtomFamily",
-  default: () => SquareValue.EMPTY
+  default: () => 'empty'
 })
 
 export const CurrentBoardAtom = atom<Matrix<SquareValue>>({
@@ -22,7 +22,7 @@ export const CurrentBoardAtom = atom<Matrix<SquareValue>>({
   default: selector({
     key: "Selector/CurrentBoard",
     get: ({ get }) => {
-      return Matrix.init(get(MetaMatrixAtom), SquareValue.EMPTY)
+      return Matrix.init(get(MetaMatrixAtom), 'empty')
     }
   })
 })
@@ -32,7 +32,7 @@ export const WorkingBoardAtom = atom<Matrix<SquareValue>>({
   default: selector({
     key: "Selector/WorkingBoard",
     get: ({ get }) => {
-      return Matrix.init(get(MetaMatrixAtom), SquareValue.EMPTY)
+      return Matrix.init(get(MetaMatrixAtom), 'empty')
     }
   })
 })

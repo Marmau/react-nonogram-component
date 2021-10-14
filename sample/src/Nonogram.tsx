@@ -1,20 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react"
-import { Button, IconButton, Box, Fab } from "@mui/material"
-import { useCallback, useMemo, useState } from "react"
-import {
-  NonogramActions,
-  NonogramGrid,
-  SquareValue
-} from "react-nonogram-component"
-import VisibilityIcon from "@mui/icons-material/Visibility"
+import HomeIcon from "@mui/icons-material/Home"
 import RedoIcon from "@mui/icons-material/Redo"
 import ReplayIcon from "@mui/icons-material/Replay"
 import UndoIcon from "@mui/icons-material/Undo"
-import HomeIcon from "@mui/icons-material/Home"
-import qrcode from "qrcode"
-import { useHistory, useParams } from "react-router"
+import VisibilityIcon from "@mui/icons-material/Visibility"
+import { Box, Button, Fab, IconButton } from "@mui/material"
 import LZUTF8 from "lzutf8"
+import qrcode from "qrcode"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { NonogramActions, NonogramGrid } from "react-nonogram-component"
+import { useHistory, useParams } from "react-router"
 
 export function Nonogram() {
   const { base64 } = useParams<{ base64: string }>()
@@ -75,23 +71,18 @@ export function Nonogram() {
     [solution, qrModules]
   )
 
-  const init = useMemo(
-    () => ({
-      values: solution.values.map((v, i) => {
-        const col = i % solution.cols
-        const row = Math.floor(i / solution.cols)
+  const init = useMemo(() => {
+    return solution.values.map((v, i) => {
+      const col = i % solution.cols
+      const row = Math.floor(i / solution.cols)
 
-        if (isInGroup(row, col)) {
-          return v ? SquareValue.FILLED : SquareValue.MARKED
-        } else {
-          return SquareValue.EMPTY
-        }
-      }),
-      rows: solution.rows,
-      cols: solution.cols
-    }),
-    [solution, isInGroup]
-  )
+      if (isInGroup(row, col)) {
+        return v ? "filled" : "marked"
+      } else {
+        return "empty"
+      }
+    })
+  }, [solution, isInGroup])
 
   const [actions, setActions] = useState<NonogramActions>({
     canRedo: false,
@@ -100,8 +91,28 @@ export function Nonogram() {
     undo: () => {},
     restart: () => {},
     setGridHidden: () => {},
-    reset: () => {}
+    nextState: () => {},
+    getCurrentBoard: () => []
   })
+
+  const loadSavedGridOnce = useRef<Record<string, any>>({})
+  useEffect(() => {
+    if (!loadSavedGridOnce.current[base64]) {
+      console.log("fromLS")
+
+      const inLocalStorage = localStorage.getItem(base64)
+      if (inLocalStorage) {
+        actions.nextState(JSON.parse(inLocalStorage))
+      }
+
+      loadSavedGridOnce.current = { [base64]: true }
+    } else {
+      const jsonBoard = JSON.stringify(actions.getCurrentBoard())
+      localStorage.clear()
+      localStorage.setItem(base64, jsonBoard)
+      console.log("save LS")
+    }
+  }, [actions, base64])
 
   const refresh = useCallback(
     (newActions: NonogramActions) => {
@@ -128,11 +139,7 @@ export function Nonogram() {
           --square-marked-symbol-color: #9e9cbd;
         `}
       >
-        <NonogramGrid
-          solution={solution}
-          init={init}
-          onRefresh={refresh}
-        />
+        <NonogramGrid solution={solution} init={init} onRefresh={refresh} />
       </Box>
 
       <Box

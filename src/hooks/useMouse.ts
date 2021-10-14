@@ -15,7 +15,7 @@ export function useMouse() {
   >(undefined)
 
   const [mouseSquareValue, setMouseSquareValue] = useState<SquareValue>(
-    SquareValue.EMPTY
+    'empty'
   )
 
   const onMouseDown = useCallback(
@@ -25,17 +25,17 @@ export function useMouse() {
       
       if (event.button === 0 && event.type === "mousedown") {
         setMouseButton("left")
-        if (lastPositionSquareValue === SquareValue.FILLED) {
-          setMouseSquareValue(SquareValue.EMPTY)
+        if (lastPositionSquareValue === 'filled') {
+          setMouseSquareValue('empty')
         } else {
-          setMouseSquareValue(SquareValue.FILLED)
+          setMouseSquareValue('filled')
         }
       } else if (event.button === 2 && event.type === "mousedown") {
         setMouseButton("right")
-        if (lastPositionSquareValue === SquareValue.MARKED) {
-          setMouseSquareValue(SquareValue.EMPTY)
+        if (lastPositionSquareValue === 'marked') {
+          setMouseSquareValue('empty')
         } else {
-          setMouseSquareValue(SquareValue.MARKED)
+          setMouseSquareValue('marked')
         }
       }
     },

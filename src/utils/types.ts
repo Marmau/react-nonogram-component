@@ -1,8 +1,4 @@
-export enum SquareValue {
-  EMPTY = 'empty',
-  FILLED = 'filled',
-  MARKED = 'marked'
-}
+export type SquareValue = 'empty' | 'filled' | 'marked'
 
 export type LineType = 'col' | 'row'
 
@@ -46,5 +42,6 @@ export interface NonogramActions {
   redo: () => void
   restart: () => void
   setGridHidden: (hidden: boolean) => void
-  reset: (matrix: SquareValue[][]) => void
+  nextState: (grid: SquareValue[]) => void
+  getCurrentBoard: () => SquareValue[]
 }
