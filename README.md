@@ -71,7 +71,7 @@ export interface NonogramActions {
     redo: () => void; // redo the last move
     restart: () => void; // restart the game
     setGridHidden: (hidden: boolean) => void; // hide the borders of the grid
-    reset: (grid: SquareValue[]) => void; // reset the grid to a state (1D array with all square values)
+    nextState: (grid: SquareValue[]) => void; // set  the next grid in history (1D array with all square values)
 }
 ```
 
