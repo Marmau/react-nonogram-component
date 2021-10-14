@@ -32,7 +32,7 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
  
   const {
     resetHistory,
-    appendToHistory,
+    cleanHistory,
     undoAction,
     redoAction,
     canUndo,
@@ -52,10 +52,10 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
   const onBoardMouseUp = useCallback(
     (event: React.MouseEvent) => {
       onMouseUp(event)
-      // updateCurrentBoard()
-      appendToHistory()
+      cleanHistory()
+      updateCurrentBoard()
     },
-    [onMouseUp, appendToHistory]
+    [onMouseUp, updateCurrentBoard]
   )
 
   const onBoardMouseDown = useCallback(
@@ -92,7 +92,6 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
       restart: resetHistory,
       nextState: (grid: SquareValue[]) => {
         resetBoard(new Matrix(grid, metaMatrix))
-        appendToHistory()
       },
       getCurrentBoard: () => currentBoard.values
     })
@@ -105,7 +104,6 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
     redoAction,
     resetHistory,
     resetBoard,
-    appendToHistory,
     currentBoard
   ])
 

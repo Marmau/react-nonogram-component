@@ -1,31 +1,28 @@
-import { useCallback } from "react"
+import { useCallback, useEffect } from "react"
 import { useRecoilState } from "recoil"
 import { HistoryAtom, HistoryStepNumberAtom } from "../utils/context"
 import { useBoard } from "./useBoard"
 
 export function useHistory() {
-  const { resetBoard, workingBoard, updateCurrentBoard } = useBoard()
+  const { resetBoard, workingBoard, updateCurrentBoard, currentBoard } =
+    useBoard()
 
   const [history, setHistory] = useRecoilState(HistoryAtom)
   const [stepNumber, setStepNumber] = useRecoilState(HistoryStepNumberAtom)
 
-  /*
-   * Append current board state to history of board states.
-   *
-   * Should be called whenever we finish changing square values.
-   *
-   * At the moment, this is called whenever we let go of a mouse button.
-   * This means we can capture multiple square value changes in a single
-   * append as long as the mouse button is held down and the cursor is
-   * dragged over multiple squares.
+  /**
+   * Update history
    */
-  const appendToHistory = useCallback(() => {
-    if (!workingBoard.equals(history[history.length - 1])) {
-      setHistory(history.concat(workingBoard))
-      setStepNumber(history.length)
-      updateCurrentBoard()
+  useEffect(() => {
+    if (!currentBoard.equals(history[stepNumber])) {
+      setHistory([
+        ...history.slice(0, stepNumber + 1),
+        currentBoard,
+        ...history.slice(stepNumber + 2)
+      ])
+      setStepNumber((step) => step + 1)
     }
-  }, [setHistory, setStepNumber, history, workingBoard, updateCurrentBoard])
+  }, [setHistory, setStepNumber, history, currentBoard])
 
   /**
    * Undo the most recent action.
@@ -48,6 +45,10 @@ export function useHistory() {
     setStepNumber(stepNumber + 1)
   }, [history, resetBoard, stepNumber, setStepNumber])
 
+  const cleanHistory = useCallback(() => {
+    setHistory((history) => history.slice(0, stepNumber + 2))
+  }, [setHistory, stepNumber])
+
   const resetHistory = useCallback(() => {
     resetBoard(history[0])
     setHistory([history[0]])
@@ -63,9 +64,9 @@ export function useHistory() {
   return {
     stepNumber,
     setStepNumber,
-    appendToHistory,
     undoAction,
     redoAction,
+    cleanHistory,
     resetHistory,
     canUndo: canUndo(),
     canRedo: canRedo(),
