@@ -2,7 +2,10 @@
 
 ## Introduction
 
-This is a React component to display a Nonogram grid from the solution. Hints are automatically processed, and updated depending on the player moves.
+This is a React component to display a Nonogram grid from the solution. Hints are automatically computed, and updated depending on the player moves.
+
+![Nonogram](illustration.png)
+
 
 ## Usage
 

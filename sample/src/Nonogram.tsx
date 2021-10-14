@@ -125,8 +125,7 @@ export function Nonogram() {
           padding: 5px;
           --hint-font-family: monospace;
           --game-board-background-color: #bbb;
-          --square-marked-symbol-color: yellow;
-          --square-marked-symbol: "\/";
+          --square-marked-symbol-color: #9e9cbd;
         `}
       >
         <NonogramGrid
