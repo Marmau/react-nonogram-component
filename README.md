@@ -6,8 +6,14 @@ This is a React component to display a Nonogram grid from the solution. Hints ar
 
 ![Nonogram](illustration.png)
 
+**Demo:** https://qrcode-nonogram.netlify.app/
 
 ## Usage
+
+### Install
+```bash
+npm install react-nonogram-component
+```
 
 ### Prerequisites
 
@@ -32,6 +38,7 @@ A sample project is under the `sample/` directory.
 CSS can be overriden via CSS variables.
 
 Here are the default values:
+
 ```css
 --game-grid-color: #444
 --hint-font-family: monospace;
@@ -47,20 +54,21 @@ Here are the default values:
 ```
 
 ### Component parameters
+
 `solution`: the solution for the grid
 
 ```typescript
 export interface NonogramGridInput {
-    values: (boolean | SquareValue.EMPTY | SquareValue.FILLED)[]; // 1D array with all square values
-    rows: number; // number of rows
-    cols: number; // number of cols
+  values: (boolean | SquareValue.EMPTY | SquareValue.FILLED)[] // 1D array with all square values
+  rows: number // number of rows
+  cols: number // number of cols
 }
 ```
 
 `init`: initial grid displayed to the player
 
 ```typescript
-type Init = (SquareValue.EMPTY | SquareValue.FILLED | SquareValue.MARKED)[]; // 1D array with all square values
+type Init = (SquareValue.EMPTY | SquareValue.FILLED | SquareValue.MARKED)[] // 1D array with all square values
 ```
 
 `onRefresh`: Event function: called each time the nonogram is refreshed. It allows the developer to interact with the grid.
@@ -69,25 +77,28 @@ type Init = (SquareValue.EMPTY | SquareValue.FILLED | SquareValue.MARKED)[]; // 
 function onRefresh(action: NonogramActions): void
 
 export interface NonogramActions {
-    canUndo: boolean; // true if user can undo its last move, else false
-    canRedo: boolean; // true if user can redo its last move, else false
-    undo: () => void; // undo the last move
-    redo: () => void; // redo the last move
-    restart: () => void; // restart the game
-    setGridHidden: (hidden: boolean) => void; // hide the borders of the grid
-    nextState: (grid: SquareValue[]) => void; // set  the next grid in history (1D array with all square values)
+  canUndo: boolean // true if user can undo its last move, else false
+  canRedo: boolean // true if user can redo its last move, else false
+  undo: () => void // undo the last move
+  redo: () => void // redo the last move
+  restart: () => void // restart the game
+  setGridHidden: (hidden: boolean) => void // hide the borders of the grid
+  nextState: (grid: SquareValue[]) => void // set  the next grid in history (1D array with all square values)
+  getProgress: () => number // get the progress of the game in % (value from 0 to 100)
+  getCurrentBoard: () => SquareValue[] // get the square values of the displayed board
 }
 ```
 
-
 ## Build the lib
-```
+
+```bash
 yarn build # one shot build
 yarn watch # build when a file is modified (dev mode)
 ```
 
 ## Run the sample
-```
+
+```bash
 cd sample/
 yarn start
 ```
