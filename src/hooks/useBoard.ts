@@ -20,9 +20,9 @@ export function useBoard() {
             BoardCellAtomFamily(location.index),
             matrix.at(location.index) ?? 'empty'
           )
-          setWorkingBoard(matrix)
-          setCurrentBoard(matrix)
         })
+        setWorkingBoard(matrix)
+        setCurrentBoard(matrix)
       },
     [setWorkingBoard, setCurrentBoard]
   )

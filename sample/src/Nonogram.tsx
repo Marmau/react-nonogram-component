@@ -9,7 +9,11 @@ import { Box, Button, Fab, IconButton } from "@mui/material"
 import LZUTF8 from "lzutf8"
 import qrcode from "qrcode"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { NonogramActions, NonogramGrid } from "react-nonogram-component"
+import {
+  NonogramActions,
+  NonogramGrid,
+  SquareValue
+} from "react-nonogram-component"
 import { useHistory, useParams } from "react-router"
 
 export function Nonogram() {
@@ -84,25 +88,20 @@ export function Nonogram() {
     })
   }, [solution, isInGroup])
 
-  const [actions, setActions] = useState<NonogramActions>({
-    canRedo: false,
-    canUndo: false,
-    redo: () => {},
-    undo: () => {},
-    restart: () => {},
-    setGridHidden: () => {},
-    nextState: () => {},
-    getCurrentBoard: () => []
-  })
+  const [actions, setActions] = useState<NonogramActions | undefined>(undefined)
 
+  // Use localstorage to save the game
   const loadSavedGridOnce = useRef<Record<string, any>>({})
   useEffect(() => {
-    if (!loadSavedGridOnce.current[base64]) {
-      console.log("fromLS")
+    if (actions === undefined) {
+      return
+    }
 
+    if (!loadSavedGridOnce.current[base64]) {
       const inLocalStorage = localStorage.getItem(base64)
       if (inLocalStorage) {
-        actions.nextState(JSON.parse(inLocalStorage))
+        const nextState = JSON.parse(inLocalStorage) as SquareValue[]
+        actions.nextState(nextState)
       }
 
       loadSavedGridOnce.current = { [base64]: true }
@@ -110,7 +109,6 @@ export function Nonogram() {
       const jsonBoard = JSON.stringify(actions.getCurrentBoard())
       localStorage.clear()
       localStorage.setItem(base64, jsonBoard)
-      console.log("save LS")
     }
   }, [actions, base64])
 
@@ -155,8 +153,8 @@ export function Nonogram() {
             variant="contained"
             color="secondary"
             startIcon={<UndoIcon />}
-            disabled={!actions.canUndo}
-            onClick={actions.undo}
+            disabled={!actions?.canUndo}
+            onClick={actions?.undo}
           >
             Undo
           </Button>
@@ -166,8 +164,8 @@ export function Nonogram() {
             variant="contained"
             color="secondary"
             startIcon={<RedoIcon />}
-            disabled={!actions.canRedo}
-            onClick={actions.redo}
+            disabled={!actions?.canRedo}
+            onClick={actions?.redo}
           >
             Redo
           </Button>
@@ -177,7 +175,7 @@ export function Nonogram() {
             variant="contained"
             color="secondary"
             startIcon={<ReplayIcon />}
-            onClick={actions.restart}
+            onClick={actions?.restart}
           >
             Restart
           </Button>
@@ -185,9 +183,9 @@ export function Nonogram() {
         <Box m={1}>
           <IconButton
             color="primary"
-            onMouseDown={() => actions.setGridHidden(true)}
-            onMouseLeave={() => actions.setGridHidden(false)}
-            onMouseUp={() => actions.setGridHidden(false)}
+            onMouseDown={() => actions?.setGridHidden(true)}
+            onMouseLeave={() => actions?.setGridHidden(false)}
+            onMouseUp={() => actions?.setGridHidden(false)}
           >
             <VisibilityIcon />
           </IconButton>
