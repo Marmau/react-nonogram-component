@@ -9,6 +9,10 @@ This is a React component to display a Nonogram grid from the solution. Hints ar
 
 ## Usage
 
+### Prerequisites
+
+You need React > 17 in your dependencies.
+
 ### Example
 
 ```typescript
