@@ -43,5 +43,6 @@ export interface NonogramActions {
   restart: () => void
   setGridHidden: (hidden: boolean) => void
   nextState: (grid: SquareValue[]) => void
+  getProgress: () => number
   getCurrentBoard: () => SquareValue[]
 }

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from "react"
 import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil"
 import { useBoard } from "../hooks/useBoard"
+import { useHints } from "../hooks/useHints"
 import { useHistory } from "../hooks/useHistory"
 import { useMouse } from "../hooks/useMouse"
 import {
@@ -9,26 +10,26 @@ import {
   WorkingBoardAtom
 } from "../utils/context"
 import { cssClasses } from "../utils/cssClasses"
-import { Matrix, MetaMatrix } from "../utils/Matrix"
+import { Matrix } from "../utils/Matrix"
 import { NonogramActions, SquareValue } from "../utils/types"
 import { GameBoard } from "./GameBoard"
 import { HintNumbers } from "./HintNumbers"
 import { gameControllerStyles } from "./styles"
 
 export interface GameControllerProps {
-  solution: Matrix<SquareValue>
   onRefresh: (nonogramActions: NonogramActions) => void
 }
 
 export const MemoBoard = React.memo(GameBoard)
 export const MemoHintNumbers = React.memo(HintNumbers)
 
-export function GameController({ solution, onRefresh }: GameControllerProps) {
+export function GameController({ onRefresh }: GameControllerProps) {
   const metaMatrix = useRecoilValue(MetaMatrixAtom)
 
   const [isGridHidden, setGridHidden] = useRecoilState(IsGridHiddenAtom)
 
   const { resetBoard, currentBoard, updateCurrentBoard } = useBoard()
+  const { getProgress } = useHints()
  
   const {
     resetHistory,
@@ -93,6 +94,7 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
       nextState: (grid: SquareValue[]) => {
         resetBoard(new Matrix(grid, metaMatrix))
       },
+      getProgress: getProgress,
       getCurrentBoard: () => currentBoard.values
     })
   }, [
@@ -104,6 +106,7 @@ export function GameController({ solution, onRefresh }: GameControllerProps) {
     redoAction,
     resetHistory,
     resetBoard,
+    getProgress,
     currentBoard
   ])
 

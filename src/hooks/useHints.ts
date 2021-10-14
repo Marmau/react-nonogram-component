@@ -18,13 +18,17 @@ export function useHints() {
 
   const getProgress = useCallback((): number => {
     const hintsCrossout = generateCrossout()
-    const allHints = [
-      ...hintsCrossout.rows.map((r) => r.line).flat(),
-      ...hintsCrossout.cols.map((r) => r.line).flat()
+    const allLines = [
+      ...hintsCrossout.rows,
+      ...hintsCrossout.cols
     ]
-    const crossouts = allHints.filter((c) => c.crossout)
+    const allHints = allLines.flatMap(l => l.line)
 
-    return Math.floor((crossouts.length / allHints.length) * 100)
+    const crossouts = allHints.filter((c) => c.crossout)
+    const overflowLines = allLines.filter(l => l.overflow)
+    const invalidCrossout = overflowLines.flatMap(ol => ol.line)
+
+    return Math.floor(((crossouts.length - invalidCrossout.length) / allHints.length) * 100)
   }, [generateCrossout])
 
   return {

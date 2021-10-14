@@ -74,7 +74,7 @@ function RecoilNonogramGrid({
   return (
     <div key={`${solutionMatrix?.toString()}_${initMatrix?.toString()}`}>
       <RecoilRoot initializeState={initializeState}>
-        <GameController solution={solutionMatrix} onRefresh={onRefresh} />
+        <GameController onRefresh={onRefresh} />
       </RecoilRoot>
     </div>
   )
