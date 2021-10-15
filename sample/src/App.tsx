@@ -3,6 +3,7 @@ import { createTheme } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { Home } from './Home'
+import { Logos } from './Logos'
 import { Nonogram } from './Nonogram'
 
 const theme = createTheme({
@@ -19,6 +20,7 @@ const theme = createTheme({
 export function App() {
   return (
     <ThemeProvider theme={theme}>
+      <Logos />
       <BrowserRouter>
         <Switch>
           <Route path='/:base64(.+)' render={() => <Nonogram />} />

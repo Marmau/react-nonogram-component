@@ -162,7 +162,7 @@ export function Nonogram() {
 
         <Box
           m={2}
-          mt={6}
+          mt={8}
           css={css`
             display: flex;
             flex-direction: column;
@@ -213,7 +213,7 @@ export function Nonogram() {
         </Box>
         <Fab
           css={css`
-            position: absolute;
+            position: fixed;
             bottom: 16px;
             right: 16px;
           `}

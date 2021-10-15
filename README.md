@@ -8,6 +8,8 @@ This is a React component to display a Nonogram grid from the solution. Hints ar
 
 **Demo:** https://qrcode-nonogram.netlify.app/
 
+**Npm package:** https://www.npmjs.com/package/react-nonogram-component
+
 ## Usage
 
 ### Install
