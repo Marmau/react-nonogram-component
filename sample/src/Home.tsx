@@ -3,11 +3,13 @@ import { Base64 } from "js-base64"
 import { useCallback, useEffect, useState } from "react"
 import AppsIcon from "@mui/icons-material/Apps"
 import { useHistory } from "react-router"
+import qrcode from "qrcode"
 import { shuffle } from "./shuffle"
 
 export function Home() {
   const [text, setText] = useState("")
   const [base64, setBase64] = useState("")
+  const [qrDataUrl, setQrDataUrl] = useState("")
   const history = useHistory()
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,9 +18,17 @@ export function Home() {
 
   useEffect(() => {
     if (text) {
+      qrcode
+        .toDataURL(text, {
+          width: 300
+        })
+        .then((dataUrl) => {
+          setQrDataUrl(dataUrl)
+        })
       setBase64(shuffle(Base64.encode(text)))
     } else {
       setBase64("")
+      setQrDataUrl("")
     }
   }, [text])
 
@@ -39,7 +49,7 @@ export function Home() {
               label="Text to discover"
               value={text}
               variant="filled"
-              inputProps={{ maxLength: 200 }}
+              inputProps={{ maxLength: 75 }}
               onChange={handleChange}
               fullWidth={true}
             />
@@ -53,6 +63,9 @@ export function Home() {
             >
               Generate nonogram
             </Button>
+          </Box>
+          <Box mt={2} sx={{ mx: "auto", width: "fit-content" }}>
+            {qrDataUrl && <img src={qrDataUrl} alt="preview qr" />}
           </Box>
         </form>
       </Box>

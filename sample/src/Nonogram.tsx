@@ -31,7 +31,7 @@ export function Nonogram() {
   const history = useHistory()
 
   const textToDiscover = useMemo(
-    () => Base64.decode(unshuffle(base64)).slice(0, 200),
+    () => Base64.decode(unshuffle(base64)).slice(0, 75),
     [base64]
   )
 
