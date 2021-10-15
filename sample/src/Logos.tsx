@@ -15,12 +15,12 @@ export function Logos() {
     >
       <Box m={1}>
         <a rel="noreferrer" target="_blank" href="https://github.com/Marmau/react-nonogram-component">
-          <img src="github.png" height="20" alt="github" />
+          <img src="github.svg" height="20" alt="github" />
         </a>
       </Box>
       <Box m={1}>
         <a rel="noreferrer" target="_blank" href="https://www.npmjs.com/package/react-nonogram-component">
-          <img src="npm.png" height="20" alt="npmjs" />
+          <img src="npm.svg" height="20" alt="npmjs" />
         </a>
       </Box>
     </Box>
