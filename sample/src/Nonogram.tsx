@@ -14,7 +14,7 @@ import {
   LinearProgress,
   Snackbar
 } from "@mui/material"
-import LZUTF8 from "lzutf8"
+import { Base64 } from "js-base64"
 import qrcode from "qrcode"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
@@ -23,6 +23,7 @@ import {
   SquareValue
 } from "react-nonogram-component"
 import { useHistory, useParams } from "react-router"
+import { unshuffle } from "./shuffle"
 
 export function Nonogram() {
   const { base64 } = useParams<{ base64: string }>()
@@ -30,13 +31,7 @@ export function Nonogram() {
   const history = useHistory()
 
   const textToDiscover = useMemo(
-    () =>
-      (
-        LZUTF8.decompress(base64, {
-          inputEncoding: "Base64",
-          outputEncoding: "String"
-        }) as string
-      ).slice(0, 200),
+    () => Base64.decode(unshuffle(base64)).slice(0, 200),
     [base64]
   )
 

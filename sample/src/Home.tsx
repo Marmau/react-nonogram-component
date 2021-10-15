@@ -1,8 +1,9 @@
 import { Box, Button, Container, TextField, Typography } from "@mui/material"
-import LZUTF8 from "lzutf8"
+import { Base64 } from "js-base64"
 import { useCallback, useEffect, useState } from "react"
 import AppsIcon from "@mui/icons-material/Apps"
 import { useHistory } from "react-router"
+import { shuffle } from "./shuffle"
 
 export function Home() {
   const [text, setText] = useState("")
@@ -15,11 +16,7 @@ export function Home() {
 
   useEffect(() => {
     if (text) {
-      setBase64(
-        LZUTF8.compress(text, {
-          outputEncoding: "Base64"
-        })
-      )
+      setBase64(shuffle(Base64.encode(text)))
     } else {
       setBase64("")
     }
