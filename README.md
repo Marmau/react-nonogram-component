@@ -35,7 +35,7 @@ const solution = {
 <NonogramGrid solution={solution} />
 ```
 
-A sample project is under the `sample/` directory.
+A demo project is under the `demo/` directory.
 
 ### Style
 
