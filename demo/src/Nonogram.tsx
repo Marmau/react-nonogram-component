@@ -23,6 +23,7 @@ import {
   SquareValue
 } from "react-nonogram-component"
 import { useHistory, useParams } from "react-router"
+import { ShareButton } from "./ShareButton"
 import { unshuffle } from "./shuffle"
 
 export function Nonogram() {
@@ -163,6 +164,15 @@ export function Nonogram() {
             flex-direction: column;
           `}
         >
+          <Box
+            m={1}
+            pb={2}
+            css={css`
+              border-bottom: 1px solid #bbb;
+            `}
+          >
+            <ShareButton />
+          </Box>
           <Box m={1}>
             <Button
               variant="contained"
