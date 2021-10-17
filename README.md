@@ -44,15 +44,15 @@ CSS can be overriden via CSS variables.
 Here are the default values:
 
 ```css
---game-grid-color: #444
+--game-grid-color: #444;
 --hint-font-family: monospace;
---hint-color: #000
---hint-crossout-color: #bbb
---hint-overflow-background, rgba(255, 0, 0, 0.1)
+--hint-color: #000;
+--hint-crossout-color: #bbb;
+--hint-overflow-background: rgba(255, 0, 0, 0.1);
 --game-board-background-color: #bbb;
---square-filled-background-color: #353235
---square-empty-background-color: #fff
---square-marked-background-color, #fff
+--square-filled-background-color: #353235;
+--square-empty-background-color: #fff;
+--square-marked-background-color: #fff;
 --square-marked-symbol-color: #bbb;
 --square-marked-symbol: "\\2738";
 ```
