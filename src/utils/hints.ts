@@ -148,16 +148,6 @@ function appliableLineAnalysisForHint(
     if (type === "filled" && count === hint) {
       return acc.concat([lineAnalysis])
     } else if (type === "filled" && count !== hint) {
-      // if (count < hint) {
-      //   return tailRecursion(
-      //     hint,
-      //     [[count, "free"], ...lineAnalysis.slice(1)],
-      //     acc
-      //   )
-      // } else {
-        // return acc.concat([[[count, "free"], ...lineAnalysis.slice(1)]])
-      // }
-      // return acc.concat([lineAnalysis])
       return acc
     } else if (type === "free" && count > hint) {
       return tailRecursion(
@@ -176,15 +166,6 @@ function appliableLineAnalysisForHint(
     }
   }
 
-  // const numberFilled = lineAnalysis.filter(la => la[1] === 'filled').length
-  // let i = 0
-  // let result = [] as AppliableLineAnalysis[]
-  // do {
-  //   result = tailRecursion(hint, lineAnalysis, i, [])
-  //   i++
-  // } while (i < numberFilled && result.length === 0)
-  // return result
-
   return tailRecursion(hint, lineAnalysis, [])
 }
 
@@ -197,8 +178,6 @@ function applyHintToLineAnalysis(
   const [count, type] = first
   if (count === hint) {
     return [type === "filled", others]
-  } else if (type === "filled") { 
-    return [false, others]
   } else {
     return [false, [[count - hint - 1, "free"], ...others]]
   }
@@ -225,9 +204,12 @@ function computePossibleCrossouts(
         return []
       }
     } else {
-      const appliable = appliableLineAnalysisForHint(goalHints[0], lineAnalysis)
-      console.log("appliable", lineAnalysis, goalHints, appliable)
-      return appliable.flatMap((appliableLA) => {
+      const appliables = appliableLineAnalysisForHint(
+        goalHints[0],
+        lineAnalysis
+      )
+      console.log("appliable", lineAnalysis, goalHints, appliables)
+      return appliables.flatMap((appliableLA) => {
         const [crossout, next] = applyHintToLineAnalysis(firstHint, appliableLA)
         return recursion(lastHints, next, current.concat(crossout))
       })
