@@ -17,6 +17,10 @@ export interface NonogramGridInput<T> {
   cols: number[][]
 }
 
+export type LineAnalysisItem = [count: number, type: 'free' | 'filled']
+
+export type LineAnalysis = LineAnalysisItem[]
+
 export type MouseButton = "none" | "left" | "right"
 
 export interface HintCrossout {

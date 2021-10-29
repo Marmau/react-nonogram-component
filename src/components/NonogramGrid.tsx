@@ -29,7 +29,7 @@ function RecoilNonogramGrid({
     return new Matrix(
       solution.values.map((elem) => {
         if (typeof elem === 'boolean') {
-          return elem ? 'filled' : 'empty'
+          return elem ? 'filled' : 'marked'
         } else {
           return elem
         }
@@ -54,7 +54,7 @@ function RecoilNonogramGrid({
       metaMatrix.all().forEach((location) => {
         set(
           BoardCellAtomFamily(location.index),
-          realInit.at(location.index) ?? 'empty'
+          realInit.at(location.index) ?? 'marked'
         )
       })
 
