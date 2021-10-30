@@ -470,3 +470,29 @@ test("7 2 1 7 => xxxxxxx _ _ x _ x xxxxxxx   => 7 _ 1 7", () => {
     completed: false
   })
 })
+
+test("1 3 => _ _ x xxx => 1 3 (completed)", () => {
+  expect(
+    computeCrossoutLine(
+      [1, 3],
+      [
+        [1, "free"],
+        [1, "filled"],
+        [3, "filled"],
+      ]
+    )
+  ).toStrictEqual({
+    line: [
+      {
+        hint: 1,
+        crossout: true
+      },
+      {
+        hint: 3,
+        crossout: true
+      },
+    ],
+    overflow: false,
+    completed: true
+  })
+})

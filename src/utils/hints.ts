@@ -151,8 +151,7 @@ function appliableLineAnalysisForHint(
       return acc.concat([lineAnalysis])
     } else if (
       type === "filled" &&
-      count !== hint //&&
-      // lineAnalysis.length === completeLineAnalysis.length
+      count !== hint 
     ) {
       return tailRecursion(
         hint,
@@ -167,18 +166,16 @@ function appliableLineAnalysisForHint(
         ],
         acc
       )
-      // } else if (type === "filled" && count !== hint) {
-      //   return acc
-    } else if (type !== "filled" && count > hint) {
+    } else if (type === "wrong" && count >= hint) {
       return tailRecursion(
         hint,
         [[count - hint - 1, type], ...lineAnalysis.slice(1)],
         acc.concat([lineAnalysis])
       )
-    } else if (type !== "filled" && count === hint) {
+    } else if (type !== "filled" && count >= hint) {
       return tailRecursion(
         hint,
-        lineAnalysis.slice(1),
+        [[count - hint - 1, type], ...lineAnalysis.slice(1)],
         acc.concat([lineAnalysis])
       )
     } else {
@@ -208,11 +205,6 @@ function applyHintToLineAnalysis(
     } else {
       return [crossout, [[newCount, newType], ...others]]
     }
-    // if (newCount === 0) {
-    //   return [crossout, others]
-    // } else {
-    //   return [crossout, [[newCount, newType], ...others]]
-    // }
   }
 }
 
@@ -222,7 +214,7 @@ function computePossibleCrossouts(
 ): Crossout[][] {
   const recursion = (
     remainingHints: number[],
-    lineAnalysis: LineAnalysis,
+    remainingLineAnalysis: LineAnalysis,
     current: Crossout[]
   ): Crossout[][] => {
     const [firstHint, ...lastHints] = remainingHints
@@ -230,29 +222,23 @@ function computePossibleCrossouts(
     if (firstHint === undefined) {
       if (
         current.every((c) => c) ||
-        lineAnalysis.every((la) => la[1] !== "filled")
+        remainingLineAnalysis.every((la) => la[1] !== "filled")
       ) {
         return [current]
       } else {
         return []
       }
     } else {
-      const usableLineAnalysis = lineAnalysis.slice(
-        lineAnalysis.findIndex(
+      const usableLineAnalysis = remainingLineAnalysis.slice(
+        remainingLineAnalysis.findIndex(
           ([count, type]) =>
             (type !== "filled" && count >= remainingHints[0]) ||
             type === "filled"
         )
       )
-      console.log(
-        "usable?",
-        remainingHints[0],
-        lineAnalysis,
-        usableLineAnalysis
-      )
-
+     
       const appliables = appliableLineAnalysisForHint(
-        remainingHints[0],
+        firstHint,
         usableLineAnalysis
       )
       console.log("appliable", usableLineAnalysis, remainingHints, appliables)
