@@ -150,7 +150,6 @@ function appliableLineAnalysisForHint(
     }
 
     const [count, type] = lineAnalysis[0]
-    // if (type === "filled" && count === hint) {
     if (isFilled(type) && count === hint) {
       return acc.concat([lineAnalysis])
     } else if (isFilled(type) && count !== hint) {
@@ -242,7 +241,6 @@ function computePossibleCrossouts(
         firstHint,
         usableLineAnalysis
       )
-      console.log("appliable", usableLineAnalysis, remainingHints, appliables)
       return appliables.flatMap((appliableLA) => {
         const [crossout, next] = applyHintToLineAnalysis(firstHint, appliableLA)
         return recursion(lastHints, next, current.concat(crossout))
@@ -258,7 +256,6 @@ function computeAndAggregateCrossouts(
   lineAnalysis: LineAnalysis
 ): boolean[] {
   const allCrossoutsByLine = computePossibleCrossouts(goalHints, lineAnalysis)
-  console.log("possible", allCrossoutsByLine)
 
   if (allCrossoutsByLine.length === 0) {
     return goalHints.map(() => false)
@@ -281,7 +278,6 @@ function computeAndAggregateCrossouts(
     )
     const minButCrossoutsByLine = butCrossoutsByLine
       .filter(([_, countTrueBut, countFalseBut]) => countTrueBut + countFalseBut === minButInALine)
-      // .map(([crossouts]) => crossouts)
 
     const maxTrueButInALine = minButCrossoutsByLine.reduce(
       (previous, [_, countTrueBut]) => {
@@ -371,8 +367,6 @@ export function generateCrossoutFor(
   line: SquareValue[],
   hints: number[]
 ): HintCrossoutLine {
-  // return getCrossoutLine(hints, generateHintsFor(line))
-
   return computeCrossoutLine(hints, analyzeLine(line))
 }
 

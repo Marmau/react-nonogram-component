@@ -1,11 +1,11 @@
-import React, { memo, useMemo } from "react"
-import { useRecoilValue } from "recoil"
+import React, { memo, useEffect, useMemo } from "react"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useBoard } from "../hooks/useBoard"
 import { useHints } from "../hooks/useHints"
-import { HistoryStepNumberAtom } from "../utils/context"
+import { CrossoutsAtom, HistoryStepNumberAtom } from "../utils/context"
 import { cssClasses } from "../utils/cssClasses"
 import { generateCrossoutFor } from "../utils/hints"
-import { LineType, SquareValue } from "../utils/types"
+import { HintCrossoutLine, LineType, SquareValue } from "../utils/types"
 
 export interface HintNumbersProps {
   lineType: LineType
@@ -13,14 +13,26 @@ export interface HintNumbersProps {
 
 function LineHintNumbers({
   line,
-  goalHints
+  goalHints,
+  id
 }: {
   line: SquareValue[]
   goalHints: number[]
+  id: string
 }) {
+  const setCrossoutsAtom = useSetRecoilState(CrossoutsAtom)
+
   const crossout = useMemo(() => {
     return generateCrossoutFor(line, goalHints)
   }, [line, goalHints])
+
+  useEffect(() => {
+    setCrossoutsAtom(crossoutMap => {
+      const newCrossoutMap = new Map<string, HintCrossoutLine>(crossoutMap)
+      newCrossoutMap.set(id, crossout)
+      return newCrossoutMap
+    })
+  }, [crossout, id])
 
   return (
     <div
@@ -30,7 +42,7 @@ function LineHintNumbers({
       )}
     >
       <div className={cssClasses("inner-hint-group")}>
-        {generateCrossoutFor(line, goalHints).line.map((co, i) => (
+        {crossout.line.map((co, i) => (
           <div
             key={i}
             className={cssClasses("hint", co.crossout && "crossout")}
@@ -75,6 +87,7 @@ export function HintNumbers({ lineType }: HintNumbersProps) {
     return goalHintsLines.map((hintLine, i) => (
       <MemoLineHintNumbers
         key={i}
+        id={lineType + i}
         goalHints={hintLine}
         line={getLine(lineType, i)}
       />

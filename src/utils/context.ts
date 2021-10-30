@@ -1,6 +1,6 @@
 import { atom, atomFamily, selector } from "recoil"
 import { Matrix, MetaMatrix } from "./Matrix"
-import { Hints, MouseButton, SquareValue } from "./types"
+import { HintCrossoutLine, Hints, MouseButton, SquareValue } from "./types"
 
 export const MouseButtonAtom = atom<MouseButton>({
   key: "MouseButton",
@@ -55,12 +55,9 @@ export const GoalHintsAtom = atom<Hints>({
   }
 })
 
-export const CurrentHintsAtom = atom<Hints>({
+export const CrossoutsAtom = atom<Map<string, HintCrossoutLine>>({
   key: "CurrentHints",
-  default: {
-    rows: [],
-    cols: []
-  }
+  default: new Map()
 })
 
 export const IsGridHiddenAtom = atom<boolean>({
