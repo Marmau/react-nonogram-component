@@ -283,7 +283,7 @@ test("2 1 2 => _ _ _ x x _ x x _ _ _ _  => _ _ _", () => {
     line: [
       {
         hint: 2,
-        crossout: true
+        crossout: false
       },
       {
         hint: 1,
@@ -291,7 +291,7 @@ test("2 1 2 => _ _ _ x x _ x x _ _ _ _  => _ _ _", () => {
       },
       {
         hint: 2,
-        crossout: false
+        crossout: true
       }
     ],
     overflow: false,
@@ -432,5 +432,41 @@ test("1 2 3 => x_ x x _ x _ x x x   => 1 2 3 (overflow)", () => {
     ],
     overflow: true,
     completed: true
+  })
+})
+
+test("7 2 1 7 => xxxxxxx _ _ x _ x xxxxxxx   => 7 _ 1 7", () => {
+  expect(
+    computeCrossoutLine(
+      [7, 2, 1, 7],
+      [
+        [7, "filled"],
+        [1, "free"],
+        [1, "filled"],
+        [1, "filled"],
+        [7, "filled"],
+      ]
+    )
+  ).toStrictEqual({
+    line: [
+      {
+        hint: 7,
+        crossout: true
+      },
+      {
+        hint: 2,
+        crossout: false
+      },
+      {
+        hint: 1,
+        crossout: true
+      },
+      {
+        hint: 7,
+        crossout: true
+      }
+    ],
+    overflow: false,
+    completed: false
   })
 })

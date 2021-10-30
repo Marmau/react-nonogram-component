@@ -151,13 +151,13 @@ function appliableLineAnalysisForHint(
       return acc.concat([lineAnalysis])
     } else if (
       type === "filled" &&
-      count !== hint &&
-      lineAnalysis.length === completeLineAnalysis.length
+      count !== hint //&&
+      // lineAnalysis.length === completeLineAnalysis.length
     ) {
       return tailRecursion(
         hint,
         [
-          [count, "wrong"],
+          [hint, "wrong"],
           ...lineAnalysis
             .slice(1)
             .map(
@@ -167,8 +167,8 @@ function appliableLineAnalysisForHint(
         ],
         acc
       )
-    } else if (type === "filled" && count !== hint) {
-      return acc
+      // } else if (type === "filled" && count !== hint) {
+      //   return acc
     } else if (type !== "filled" && count > hint) {
       return tailRecursion(
         hint,
@@ -203,11 +203,16 @@ function applyHintToLineAnalysis(
     const newType = type === "free" ? "free" : "wrong"
     const crossout = type === "free" ? false : undefined
 
-    if (newCount === 0) {
+    if (newCount <= 0) {
       return [crossout, others]
     } else {
-      return [crossout, [[count - hint - 1, newType], ...others]]
+      return [crossout, [[newCount, newType], ...others]]
     }
+    // if (newCount === 0) {
+    //   return [crossout, others]
+    // } else {
+    //   return [crossout, [[newCount, newType], ...others]]
+    // }
   }
 }
 
@@ -216,11 +221,11 @@ function computePossibleCrossouts(
   lineAnalysis: LineAnalysis
 ): Crossout[][] {
   const recursion = (
-    goalHints: number[],
+    remainingHints: number[],
     lineAnalysis: LineAnalysis,
     current: Crossout[]
   ): Crossout[][] => {
-    const [firstHint, ...lastHints] = goalHints
+    const [firstHint, ...lastHints] = remainingHints
 
     if (firstHint === undefined) {
       if (
@@ -232,11 +237,25 @@ function computePossibleCrossouts(
         return []
       }
     } else {
-      const appliables = appliableLineAnalysisForHint(
-        goalHints[0],
-        lineAnalysis
+      const usableLineAnalysis = lineAnalysis.slice(
+        lineAnalysis.findIndex(
+          ([count, type]) =>
+            (type !== "filled" && count >= remainingHints[0]) ||
+            type === "filled"
+        )
       )
-      console.log("appliable", lineAnalysis, goalHints, appliables)
+      console.log(
+        "usable?",
+        remainingHints[0],
+        lineAnalysis,
+        usableLineAnalysis
+      )
+
+      const appliables = appliableLineAnalysisForHint(
+        remainingHints[0],
+        usableLineAnalysis
+      )
+      console.log("appliable", usableLineAnalysis, remainingHints, appliables)
       return appliables.flatMap((appliableLA) => {
         const [crossout, next] = applyHintToLineAnalysis(firstHint, appliableLA)
         return recursion(lastHints, next, current.concat(crossout))
@@ -247,31 +266,10 @@ function computePossibleCrossouts(
   return recursion(goalHints, lineAnalysis, [])
 }
 
-// function areHintsAllFitted(goalHints: number[], lineAnalysis: LineAnalysis) {
-//   const filled = lineAnalysis
-//     .filter((la) => la[1] === "filled")
-//     .map((la) => la[0])
-
-//   if (filled.length < goalHints.length) {
-//     return false
-//   }
-
-//   let workingHints = goalHints
-//   let workingFilled = filled
-//   while (workingHints.length > 0 && workingFilled.length > 0) {
-//     if (workingHints[0] === filled[0]) {
-//       workingHints = workingHints.slice(1)
-//     }
-//     workingFilled = workingFilled.slice(1)
-//   }
-
-//   return workingHints.length === 0
-// }
-
 function computeAndAggregateCrossouts(
   goalHints: number[],
   lineAnalysis: LineAnalysis
-): Crossout[] {
+): boolean[] {
   const allCrossoutsByLine = computePossibleCrossouts(goalHints, lineAnalysis)
   console.log("possible", allCrossoutsByLine)
 
@@ -279,20 +277,40 @@ function computeAndAggregateCrossouts(
     line.every((e) => e !== undefined)
   ) as boolean[][]
 
-  const undefinedCrossoutsByLine = allCrossoutsByLine
-    .filter((line) => line.some((e) => e === undefined))
-    .map((line) => line.map((e) => (e === undefined ? false : e)))
-
-  const crossoutsByLine =
-    possibleCrossoutsByLine.length > 0
-      ? possibleCrossoutsByLine
-      : undefinedCrossoutsByLine
-
-  if (crossoutsByLine.length === 0) {
+  if (allCrossoutsByLine.length === 0) {
     return goalHints.map(() => false)
-  }
-  else {
-    return crossoutsByLine.reduce(
+  } else if (possibleCrossoutsByLine.length > 0) {
+    return possibleCrossoutsByLine.reduce(
+      (previous, current) => {
+        return previous.map((_, i) => previous[i] && current[i])
+      },
+      goalHints.map(() => true)
+    )
+  } else {
+    const undefinedCrossoutsByLine = allCrossoutsByLine
+      .map(
+        (line) =>
+          [line, line.filter((e) => e === undefined).length] as [
+            Crossout[],
+            number
+          ]
+      )
+      .filter(([_, countUndefined]) => countUndefined > 0)
+
+    const minUndefinedInALine = undefinedCrossoutsByLine.reduce(
+      (previous, [_, countUndefined]) => {
+        return countUndefined < previous ? countUndefined : previous
+      },
+      Number.MAX_SAFE_INTEGER
+    )
+    const minUndefinedCrossoutsByLine = undefinedCrossoutsByLine
+      .filter(([_, countUndefined]) => countUndefined === minUndefinedInALine)
+      .map(([crossouts]) => crossouts)
+
+    const asBoolean = minUndefinedCrossoutsByLine.map((line) =>
+      line.map((e) => (e === undefined ? false : e))
+    )
+    return asBoolean.reduce(
       (previous, current) => {
         return previous.map((_, i) => previous[i] && current[i])
       },
@@ -348,8 +366,13 @@ export function analyzeLine(line: SquareValue[]): LineAnalysis {
   return analysisItems.filter((i) => i[0] > 0)
 }
 
-export function generateCrossoutFor(line: SquareValue[], hints: number[]) {
-  return getCrossoutLine(hints, generateHintsFor(line))
+export function generateCrossoutFor(
+  line: SquareValue[],
+  hints: number[]
+): HintCrossoutLine {
+  // return getCrossoutLine(hints, generateHintsFor(line))
+
+  return computeCrossoutLine(hints, analyzeLine(line))
 }
 
 export function getHintCrossoutLines(
