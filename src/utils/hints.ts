@@ -4,13 +4,9 @@ import {
   AppliableLineAnalysisItem,
   Crossout,
   HintCrossoutLine,
-  Hints,
-  HintsCrossout,
-  isFilled,
+  Hints, isFilled,
   isFree,
-  LineAnalysis,
-  LineAnalysisItem,
-  SquareValue
+  LineAnalysis, SquareValue
 } from "./types"
 
 function last<T>(array: T[]): T {
