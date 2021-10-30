@@ -1,9 +1,11 @@
 import { Matrix } from "./Matrix"
 import {
+  Crossout,
   HintCrossoutLine,
   Hints,
   HintsCrossout,
   LineAnalysis,
+  LineAnalysisItem,
   SquareValue
 } from "./types"
 
@@ -133,7 +135,7 @@ export function getCrossoutLine(
 type AppliableLineAnalysis = LineAnalysis
 function appliableLineAnalysisForHint(
   hint: number,
-  lineAnalysis: LineAnalysis
+  completeLineAnalysis: LineAnalysis
 ): AppliableLineAnalysis[] {
   const tailRecursion = (
     hint: number,
@@ -147,15 +149,33 @@ function appliableLineAnalysisForHint(
     const [count, type] = lineAnalysis[0]
     if (type === "filled" && count === hint) {
       return acc.concat([lineAnalysis])
-    } else if (type === "filled" && count !== hint) {
-      return acc
-    } else if (type === "free" && count > hint) {
+    } else if (
+      type === "filled" &&
+      count !== hint &&
+      lineAnalysis.length === completeLineAnalysis.length
+    ) {
       return tailRecursion(
         hint,
-        [[count - hint - 1, "free"], ...lineAnalysis.slice(1)],
+        [
+          [count, "wrong"],
+          ...lineAnalysis
+            .slice(1)
+            .map(
+              ([count, type]): LineAnalysisItem =>
+                type === "free" ? [count, "wrong"] : [count, type]
+            )
+        ],
+        acc
+      )
+    } else if (type === "filled" && count !== hint) {
+      return acc
+    } else if (type !== "filled" && count > hint) {
+      return tailRecursion(
+        hint,
+        [[count - hint - 1, type], ...lineAnalysis.slice(1)],
         acc.concat([lineAnalysis])
       )
-    } else if (type === "free" && count === hint) {
+    } else if (type !== "filled" && count === hint) {
       return tailRecursion(
         hint,
         lineAnalysis.slice(1),
@@ -166,38 +186,46 @@ function appliableLineAnalysisForHint(
     }
   }
 
-  return tailRecursion(hint, lineAnalysis, [])
+  return tailRecursion(hint, completeLineAnalysis, [])
 }
 
 function applyHintToLineAnalysis(
   hint: number,
   lineAnalysis: AppliableLineAnalysis
-): [boolean, LineAnalysis] {
+): [Crossout, LineAnalysis] {
   const [first, ...others] = lineAnalysis
 
   const [count, type] = first
-  if (count === hint) {
-    return [type === "filled", others]
+  if (count === hint && type === "filled") {
+    return [true, others]
   } else {
-    return [false, [[count - hint - 1, "free"], ...others]]
+    const newCount = count - hint - 1
+    const newType = type === "free" ? "free" : "wrong"
+    const crossout = type === "free" ? false : undefined
+
+    if (newCount === 0) {
+      return [crossout, others]
+    } else {
+      return [crossout, [[count - hint - 1, newType], ...others]]
+    }
   }
 }
 
 function computePossibleCrossouts(
   goalHints: number[],
   lineAnalysis: LineAnalysis
-): boolean[][] {
+): Crossout[][] {
   const recursion = (
     goalHints: number[],
     lineAnalysis: LineAnalysis,
-    current: boolean[]
-  ): boolean[][] => {
+    current: Crossout[]
+  ): Crossout[][] => {
     const [firstHint, ...lastHints] = goalHints
 
     if (firstHint === undefined) {
       if (
         current.every((c) => c) ||
-        lineAnalysis.every((la) => la[1] === "free")
+        lineAnalysis.every((la) => la[1] !== "filled")
       ) {
         return [current]
       } else {
@@ -243,14 +271,28 @@ function computePossibleCrossouts(
 function computeAndAggregateCrossouts(
   goalHints: number[],
   lineAnalysis: LineAnalysis
-) {
-  const possibleCrossouts = computePossibleCrossouts(goalHints, lineAnalysis)
-  console.log("possible", possibleCrossouts)
+): Crossout[] {
+  const allCrossoutsByLine = computePossibleCrossouts(goalHints, lineAnalysis)
+  console.log("possible", allCrossoutsByLine)
 
-  if (possibleCrossouts.length === 0) {
+  const possibleCrossoutsByLine = allCrossoutsByLine.filter((line) =>
+    line.every((e) => e !== undefined)
+  ) as boolean[][]
+
+  const undefinedCrossoutsByLine = allCrossoutsByLine
+    .filter((line) => line.some((e) => e === undefined))
+    .map((line) => line.map((e) => (e === undefined ? false : e)))
+
+  const crossoutsByLine =
+    possibleCrossoutsByLine.length > 0
+      ? possibleCrossoutsByLine
+      : undefinedCrossoutsByLine
+
+  if (crossoutsByLine.length === 0) {
     return goalHints.map(() => false)
-  } else {
-    return possibleCrossouts.reduce(
+  }
+  else {
+    return crossoutsByLine.reduce(
       (previous, current) => {
         return previous.map((_, i) => previous[i] && current[i])
       },
@@ -264,7 +306,6 @@ export function computeCrossoutLine(
   lineAnalysis: LineAnalysis
 ): HintCrossoutLine {
   const crossout = computeAndAggregateCrossouts(goalHints, lineAnalysis)
-  // console.log("crossout", crossout)
 
   return {
     completed: crossout.every((c) => c),
