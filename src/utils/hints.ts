@@ -1,9 +1,13 @@
 import { Matrix } from "./Matrix"
 import {
+  AppliableLineAnalysis,
+  AppliableLineAnalysisItem,
   Crossout,
   HintCrossoutLine,
   Hints,
   HintsCrossout,
+  isFilled,
+  isFree,
   LineAnalysis,
   LineAnalysisItem,
   SquareValue
@@ -132,14 +136,13 @@ export function getCrossoutLine(
   }
 }
 
-type AppliableLineAnalysis = LineAnalysis
 function appliableLineAnalysisForHint(
   hint: number,
-  completeLineAnalysis: LineAnalysis
+  completeLineAnalysis: AppliableLineAnalysis
 ): AppliableLineAnalysis[] {
   const tailRecursion = (
     hint: number,
-    lineAnalysis: LineAnalysis,
+    lineAnalysis: AppliableLineAnalysis,
     acc: AppliableLineAnalysis[]
   ): AppliableLineAnalysis[] => {
     if (lineAnalysis.length === 0) {
@@ -147,32 +150,29 @@ function appliableLineAnalysisForHint(
     }
 
     const [count, type] = lineAnalysis[0]
-    if (type === "filled" && count === hint) {
+    // if (type === "filled" && count === hint) {
+    if (isFilled(type) && count === hint) {
       return acc.concat([lineAnalysis])
-    } else if (
-      type === "filled" &&
-      count !== hint 
-    ) {
+    } else if (isFilled(type) && count !== hint) {
       return tailRecursion(
         hint,
         [
-          [hint, "wrong"],
+          [hint, "free_but"],
           ...lineAnalysis
             .slice(1)
-            .map(
-              ([count, type]): LineAnalysisItem =>
-                type === "free" ? [count, "wrong"] : [count, type]
-            )
+            .map(([count, type], i): AppliableLineAnalysisItem => {
+              if (isFree(type)) {
+                return [count, "free_but"]
+              } else if (i === 0) {
+                return [count, "filled_but"]
+              } else {
+                return [count, type]
+              }
+            })
         ],
         acc
       )
-    } else if (type === "wrong" && count >= hint) {
-      return tailRecursion(
-        hint,
-        [[count - hint - 1, type], ...lineAnalysis.slice(1)],
-        acc.concat([lineAnalysis])
-      )
-    } else if (type !== "filled" && count >= hint) {
+    } else if (isFree(type) && count >= hint) {
       return tailRecursion(
         hint,
         [[count - hint - 1, type], ...lineAnalysis.slice(1)],
@@ -189,16 +189,18 @@ function appliableLineAnalysisForHint(
 function applyHintToLineAnalysis(
   hint: number,
   lineAnalysis: AppliableLineAnalysis
-): [Crossout, LineAnalysis] {
+): [Crossout, AppliableLineAnalysis] {
   const [first, ...others] = lineAnalysis
 
   const [count, type] = first
   if (count === hint && type === "filled") {
     return [true, others]
+  } else if (count === hint && type === "filled_but") {
+    return ["true_but", others]
   } else {
     const newCount = count - hint - 1
-    const newType = type === "free" ? "free" : "wrong"
-    const crossout = type === "free" ? false : undefined
+    const newType = type
+    const crossout = type === "free" ? false : "false_but"
 
     if (newCount <= 0) {
       return [crossout, others]
@@ -214,16 +216,15 @@ function computePossibleCrossouts(
 ): Crossout[][] {
   const recursion = (
     remainingHints: number[],
-    remainingLineAnalysis: LineAnalysis,
+    remainingLineAnalysis: AppliableLineAnalysis,
     current: Crossout[]
   ): Crossout[][] => {
     const [firstHint, ...lastHints] = remainingHints
 
     if (firstHint === undefined) {
-      if (
-        current.every((c) => c) ||
-        remainingLineAnalysis.every((la) => la[1] !== "filled")
-      ) {
+      if (current.every((c) => c === true || c === "true_but")) {
+        return [current.map((c) => (c === "true_but" ? true : c))]
+      } else if (remainingLineAnalysis.every((la) => !isFilled(la[1]))) {
         return [current]
       } else {
         return []
@@ -236,7 +237,7 @@ function computePossibleCrossouts(
             type === "filled"
         )
       )
-     
+
       const appliables = appliableLineAnalysisForHint(
         firstHint,
         usableLineAnalysis
@@ -259,49 +260,63 @@ function computeAndAggregateCrossouts(
   const allCrossoutsByLine = computePossibleCrossouts(goalHints, lineAnalysis)
   console.log("possible", allCrossoutsByLine)
 
-  const possibleCrossoutsByLine = allCrossoutsByLine.filter((line) =>
-    line.every((e) => e !== undefined)
-  ) as boolean[][]
-
   if (allCrossoutsByLine.length === 0) {
     return goalHints.map(() => false)
-  } else if (possibleCrossoutsByLine.length > 0) {
-    return possibleCrossoutsByLine.reduce(
-      (previous, current) => {
-        return previous.map((_, i) => previous[i] && current[i])
-      },
-      goalHints.map(() => true)
-    )
   } else {
-    const undefinedCrossoutsByLine = allCrossoutsByLine
-      .map(
-        (line) =>
-          [line, line.filter((e) => e === undefined).length] as [
-            Crossout[],
-            number
-          ]
-      )
-      .filter(([_, countUndefined]) => countUndefined > 0)
+    const butCrossoutsByLine = allCrossoutsByLine.map(
+      (line) =>
+        [
+          line,
+          line.filter((e) => e === "true_but").length,
+          line.filter((e) => e === "false_but").length
+        ] as [Crossout[], number, number]
+    )
 
-    const minUndefinedInALine = undefinedCrossoutsByLine.reduce(
-      (previous, [_, countUndefined]) => {
-        return countUndefined < previous ? countUndefined : previous
+    const minButInALine = butCrossoutsByLine.reduce(
+      (previous, [_, countTrueBut, countFalseBut]) => {
+        const sum = countTrueBut + countFalseBut
+        return sum < previous ? sum : previous
       },
       Number.MAX_SAFE_INTEGER
     )
-    const minUndefinedCrossoutsByLine = undefinedCrossoutsByLine
-      .filter(([_, countUndefined]) => countUndefined === minUndefinedInALine)
+    const minButCrossoutsByLine = butCrossoutsByLine
+      .filter(([_, countTrueBut, countFalseBut]) => countTrueBut + countFalseBut === minButInALine)
+      // .map(([crossouts]) => crossouts)
+
+    const maxTrueButInALine = minButCrossoutsByLine.reduce(
+      (previous, [_, countTrueBut]) => {
+        return countTrueBut > previous ? countTrueBut : previous
+      },
+      Number.MIN_SAFE_INTEGER
+    )
+
+    const maxTrueButCrossoutsByLine = minButCrossoutsByLine
+      .filter(([_, countTrueBut]) => countTrueBut === maxTrueButInALine)
       .map(([crossouts]) => crossouts)
 
-    const asBoolean = minUndefinedCrossoutsByLine.map((line) =>
-      line.map((e) => (e === undefined ? false : e))
-    )
-    return asBoolean.reduce(
-      (previous, current) => {
-        return previous.map((_, i) => previous[i] && current[i])
-      },
-      goalHints.map(() => true)
-    )
+    return maxTrueButCrossoutsByLine
+      .reduce(
+        (previous, current) => {
+          return previous.map((_, i) => {
+            return !(
+              previous[i] === false ||
+              current[i] === false ||
+              previous[i] === "false_but" ||
+              current[i] === "false_but"
+            )
+          })
+        },
+        goalHints.map(() => "true_but")
+      )
+      .map((crossout) => {
+        if (crossout === "false_but") {
+          return false
+        } else if (crossout === "true_but") {
+          return true
+        } else {
+          return crossout
+        }
+      })
   }
 }
 

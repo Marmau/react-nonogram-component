@@ -75,7 +75,7 @@ test("1 1 => x _ _ _ _ => 1 _", () => {
       [1, 1],
       [
         [1, "filled"],
-        [3, "free"],
+        [3, "free"]
       ]
     )
   ).toStrictEqual({
@@ -101,7 +101,7 @@ test("1 1 => _ _ x _ _ => _ _", () => {
       [
         [1, "free"],
         [1, "filled"],
-        [1, "free"],
+        [1, "free"]
       ]
     )
   ).toStrictEqual({
@@ -127,7 +127,7 @@ test("1 1 => _ _ x _ x => 1 1 (completed)", () => {
       [
         [3, "free"],
         [1, "filled"],
-        [1, "filled"],
+        [1, "filled"]
       ]
     )
   ).toStrictEqual({
@@ -155,7 +155,7 @@ test("1 1 => _ _ x _ _ _ _ _ x _ _ _ _  => 1 1 (completed)", () => {
         [1, "filled"],
         [3, "free"],
         [1, "filled"],
-        [3, "free"],
+        [3, "free"]
       ]
     )
   ).toStrictEqual({
@@ -182,7 +182,7 @@ test("2 1 2 => _ x x _ _ _ _ _ x _ _ _ _  => 2 1 _", () => {
         [2, "filled"],
         [3, "free"],
         [1, "filled"],
-        [3, "free"],
+        [3, "free"]
       ]
     )
   ).toStrictEqual({
@@ -213,7 +213,7 @@ test("2 1 2 => _ x x _ _ _ _ _ x x _ _ _ _  => 2 _ 2", () => {
         [2, "filled"],
         [3, "free"],
         [2, "filled"],
-        [3, "free"],
+        [3, "free"]
       ]
     )
   ).toStrictEqual({
@@ -245,7 +245,7 @@ test("2 1 2 => _ x x x _ _ _ x _ x x _ _ _ _  => _ 1 2", () => {
         [1, "free"],
         [1, "filled"],
         [2, "filled"],
-        [3, "free"],
+        [3, "free"]
       ]
     )
   ).toStrictEqual({
@@ -276,7 +276,7 @@ test("2 1 2 => _ _ _ x x _ x x _ _ _ _  => _ _ _", () => {
         [2, "free"],
         [2, "filled"],
         [2, "filled"],
-        [3, "free"],
+        [3, "free"]
       ]
     )
   ).toStrictEqual({
@@ -299,6 +299,7 @@ test("2 1 2 => _ _ _ x x _ x x _ _ _ _  => _ _ _", () => {
   })
 })
 
+// 1 _ 1 1 1
 test("1 1 1 1 1 => x _ x x _ x x _ x _ x _ _   => 1 _ _ 1 _", () => {
   expect(
     computeCrossoutLine(
@@ -309,7 +310,7 @@ test("1 1 1 1 1 => x _ x x _ x x _ x _ x _ _   => 1 _ _ 1 _", () => {
         [2, "filled"],
         [1, "filled"],
         [1, "filled"],
-        [1, "free"],
+        [1, "free"]
       ]
     )
   ).toStrictEqual({
@@ -350,7 +351,7 @@ test("1 2 3 => x _ x x _ x x x _ x _ x _ _   => 1 2 3 (overflow)", () => {
         [3, "filled"],
         [1, "filled"],
         [1, "filled"],
-        [1, "free"],
+        [1, "free"]
       ]
     )
   ).toStrictEqual({
@@ -381,7 +382,7 @@ test("1 2 3 => x _ x_ x x _ x x x   => 1 2 3 (overflow)", () => {
         [1, "filled"],
         [1, "filled"],
         [2, "filled"],
-        [3, "filled"],
+        [3, "filled"]
       ]
     )
   ).toStrictEqual({
@@ -412,7 +413,7 @@ test("1 2 3 => x_ x x _ x _ x x x   => 1 2 3 (overflow)", () => {
         [1, "filled"],
         [2, "filled"],
         [1, "filled"],
-        [3, "filled"],
+        [3, "filled"]
       ]
     )
   ).toStrictEqual({
@@ -444,7 +445,7 @@ test("7 2 1 7 => xxxxxxx _ _ x _ x xxxxxxx   => 7 _ 1 7", () => {
         [1, "free"],
         [1, "filled"],
         [1, "filled"],
-        [7, "filled"],
+        [7, "filled"]
       ]
     )
   ).toStrictEqual({
@@ -478,7 +479,7 @@ test("1 3 => _ _ x xxx => 1 3 (completed)", () => {
       [
         [1, "free"],
         [1, "filled"],
-        [3, "filled"],
+        [3, "filled"]
       ]
     )
   ).toStrictEqual({
@@ -490,9 +491,71 @@ test("1 3 => _ _ x xxx => 1 3 (completed)", () => {
       {
         hint: 3,
         crossout: true
-      },
+      }
     ],
     overflow: false,
     completed: true
+  })
+})
+
+test("2 2 => _ _ _ x _ xx =>  _ 2", () => {
+  expect(
+    computeCrossoutLine(
+      [2, 2],
+      [
+        [2, "free"],
+        [1, "filled"],
+        [2, "filled"]
+      ]
+    )
+  ).toStrictEqual({
+    line: [
+      {
+        hint: 2,
+        crossout: false
+      },
+      {
+        hint: 2,
+        crossout: true
+      }
+    ],
+    overflow: false,
+    completed: false
+  })
+})
+
+test("7 2 4 1 => xxxxxxx _ _ _ _ x xxxx _ _ _ _ =>  7 _ 4 _", () => {
+  expect(
+    computeCrossoutLine(
+      [7, 2, 4, 1],
+      [
+        [7, "filled"],
+        [2, "free"],
+        [1, "filled"],
+        [4, "filled"],
+        [3, "free"]
+      ]
+    )
+  ).toStrictEqual({
+    line: [
+      {
+        hint: 7,
+        crossout: true
+      },
+      {
+        hint: 2,
+        crossout: false
+      },
+      {
+        hint: 4,
+        crossout: true
+      },
+      {
+        hint: 1,
+        crossout: false
+      }      
+    ],
+    overflow: false,
+    completed: false
   })
 })
