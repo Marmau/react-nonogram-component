@@ -63,79 +63,6 @@ export function generateHints(board: Matrix<SquareValue>) {
   return hintNumbers
 }
 
-export function getCrossoutLine(
-  goalHints: number[],
-  currentHints: number[]
-): HintCrossoutLine {
-  const goalHintsCrossOut = goalHints.map((hint) => ({
-    hint,
-    crossout: false
-  }))
-
-  const currentHintsCrossOut = currentHints.map((hint) => ({
-    hint,
-    crossout: false
-  }))
-
-  let nbCrossout = 0
-
-  let i = 0
-  while (i < goalHints.length && goalHints[i] === currentHints[i]) {
-    nbCrossout++
-    goalHintsCrossOut[i].crossout = true
-    currentHintsCrossOut[i].crossout = true
-    i++
-  }
-
-  let j = 1
-  while (
-    j <= goalHints.length &&
-    goalHints[goalHints.length - j] === currentHints[currentHints.length - j] &&
-    !goalHintsCrossOut[goalHints.length - j].crossout &&
-    !currentHintsCrossOut[currentHints.length - j].crossout
-  ) {
-    nbCrossout++
-    goalHintsCrossOut[goalHints.length - j].crossout = true
-    currentHintsCrossOut[currentHints.length - j].crossout = true
-    j++
-  }
-
-  // let k = 0
-  // while (k < goalHints.length) {
-  //   if (
-  //     goalHints[k] === currentHints[k] &&
-  //     !goalHintsCrossOut[k].crossout &&
-  //     !currentHintsCrossOut[k].crossout
-  //   ) {
-  //     nbCrossout++
-  //     goalHintsCrossOut[k].crossout = true
-  //     currentHintsCrossOut[k].crossout = true
-  //   }
-  //   k++
-  // }
-
-  // let l = 1
-  // while (l <= goalHints.length) {
-  //   if (
-  //     goalHints[goalHints.length - l] ===
-  //       currentHints[currentHints.length - l] &&
-  //     !goalHintsCrossOut[goalHints.length - l].crossout &&
-  //     !currentHintsCrossOut[currentHints.length - l].crossout
-  //   ) {
-  //     nbCrossout++
-  //     goalHintsCrossOut[goalHints.length - l].crossout = true
-  //     currentHintsCrossOut[currentHints.length - l].crossout = true
-  //   }
-  //   l++
-  // }
-
-  return {
-    line: goalHintsCrossOut,
-    overflow: currentHints.length > goalHints.length,
-    completed: nbCrossout === goalHintsCrossOut.length
-  }
-}
-
 function appliableLineAnalysisForHint(
   hint: number,
   completeLineAnalysis: AppliableLineAnalysis
@@ -370,19 +297,3 @@ export function generateCrossoutFor(
   return computeCrossoutLine(hints, analyzeLine(line))
 }
 
-export function getHintCrossoutLines(
-  goalHints: number[][],
-  currentHints: number[][]
-): HintCrossoutLine[] {
-  return goalHints.map((_, i) => getCrossoutLine(goalHints[i], currentHints[i]))
-}
-
-export function getHintsCrossout(
-  goalHints: Hints,
-  currentHints: Hints
-): HintsCrossout {
-  return {
-    rows: getHintCrossoutLines(goalHints.rows, currentHints.rows),
-    cols: getHintCrossoutLines(goalHints.cols, currentHints.cols)
-  }
-}
