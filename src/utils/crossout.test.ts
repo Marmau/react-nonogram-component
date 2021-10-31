@@ -559,3 +559,109 @@ test("7 2 4 1 => xxxxxxx _ _ _ _ x xxxx _ _ _ _ =>  7 _ 4 _", () => {
     completed: false
   })
 })
+
+test("1 3 1 2 1 4 2 1 => x_xxx_x_xx____xxx_*_x_*x =>  1 3 1 2 _ _ _ 1 ", () => {
+  expect(
+    computeCrossoutLine(
+      [1, 3, 1, 2, 1, 4, 2, 1],
+      [
+        [1, "filled"],
+        [3, "filled"],
+        [1, "filled"],
+        [2, "filled"],
+        [2, "free"],
+        [3, "filled"],
+        [1, "filled"],
+        [1, "filled"]
+      ]
+    )
+  ).toStrictEqual({
+    line: [
+      {
+        hint: 1,
+        crossout: true
+      },
+      {
+        hint: 3,
+        crossout: true
+      },
+      {
+        hint: 1,
+        crossout: true
+      },
+      {
+        hint: 2,
+        crossout: true
+      },
+      {
+        hint: 1,
+        crossout: false
+      },
+      {
+        hint: 4,
+        crossout: false
+      },
+      {
+        hint: 2,
+        crossout: false
+      },   
+      {
+        hint: 1,
+        crossout: true
+      },   
+    ],
+    overflow: false,
+    completed: false
+  })
+})
+
+test("1 1 3 2 4 2 2 => x_x_xxx_xx*___xx*_x_____ =>  1 1 3 2 _ _ _ ", () => {
+  expect(
+    computeCrossoutLine(
+      [1, 1, 3, 2, 4, 2, 2],
+      [
+        [1, "filled"],
+        [1, "filled"],
+        [3, "filled"],
+        [2, "filled"],
+        [2, "free"],
+        [2, "filled"],
+        [1, "filled"],
+        [4, "free"]
+      ]
+    )
+  ).toStrictEqual({
+    line: [
+      {
+        hint: 1,
+        crossout: true
+      },
+      {
+        hint: 1,
+        crossout: true
+      },
+      {
+        hint: 3,
+        crossout: true
+      },
+      {
+        hint: 2,
+        crossout: true
+      },
+      {
+        hint: 4,
+        crossout: false
+      },
+      {
+        hint: 2,
+        crossout: false
+      },
+      {
+        hint: 2,
+        crossout: false
+      }
+    ],
+    overflow: false,
+    completed: false
+  })
+})
