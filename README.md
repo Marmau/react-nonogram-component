@@ -50,9 +50,10 @@ Here are the default values:
 --hint-crossout-color: #bbb;
 --hint-overflow-background: rgba(255, 0, 0, 0.1);
 --game-board-background-color: #bbb;
---square-filled-background-color: #353235;
---square-empty-background-color: #fff;
---square-marked-background-color: #fff;
+--mouse-highlight-color: #f5e9e9;
+--square-filled-background-color: #353235fa; # With transparency to display the mouse highlight
+--square-empty-background-color: #fffffffa;
+--square-marked-background-color: #fffffffa;
 --square-marked-symbol-color: #bbb;
 --square-marked-symbol: "\\2738";
 ```

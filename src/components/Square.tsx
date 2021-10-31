@@ -25,7 +25,6 @@ export function Square({
     onSquareMouseLeave(location)
   }, [onSquareMouseLeave, location])
 
-
   return (
     <div
       className={cssClasses(
@@ -34,11 +33,13 @@ export function Square({
         location.col > 0 && location.col % 5 === 0 && "border-left"
       )}
     >
-      <div
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        className={cssClasses("inner-square", cellState)}
-      ></div>
+      <div className={cssClasses("square-borders")}>
+        <div
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          className={cssClasses("inner-square", cellState)}
+        ></div>
+      </div>
     </div>
   )
 }

@@ -12,6 +12,8 @@ export const gameControllerStyles = css`
   grid-template-rows: min-content 1fr;
   grid-template-columns: min-content 1fr;
   width: calc(100% - 5px);
+  padding: 0 4px 4px 0;
+  overflow: hidden;
 
   .area-col-hints {
     grid-area: col-hints;
@@ -126,10 +128,21 @@ export const gameControllerStyles = css`
   .game-board {
     display: flex;
     flex-direction: column;
-    background-color: var(--game-board-background-color, #bbb);
     width: auto;
     box-shadow: 0px 0px 0px 4px var(--game-board-background-color, #bbb);
     transition: background-color 0.2s ease;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      background-color: var(--square-empty-background-color, #fff);
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
 
     .board-row {
       display: flex;
@@ -139,6 +152,11 @@ export const gameControllerStyles = css`
   }
 
   .square {
+    display: flex;
+    position: relative;
+    color: #fff;
+    cursor: pointer;
+    padding: 0px;
     flex-grow: 1;
     flex-shrink: 0;
     flex-basis: 0;
@@ -150,11 +168,44 @@ export const gameControllerStyles = css`
       float: left;
     }
 
-    display: flex;
-    color: #fff;
-    cursor: pointer;
-    padding: 0px;
-    position: relative;
+    .square-borders {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      box-shadow: #bbb 0 0 0px 1px inset;
+
+      &::before {
+        content: "";
+        position: absolute;
+        background-color: transparent;
+        top: 0;
+        left: -5000px;
+        width: 10000px;
+        height: 100%;
+        z-index: -1;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        background-color: transparent;
+        left: 0;
+        top: -5000px;
+        height: 10000px;
+        width: 100%;
+        z-index: -1;
+      }
+
+      &:hover {
+        &::before {
+          background-color: var(--mouse-highlight-color, #f5e9e9);
+        }
+
+        &::after {
+          background-color: var(--mouse-highlight-color, #f5e9e9);
+        }
+      }
+    }
 
     &.border-top {
       box-shadow: 0px -1px 0px 0px var(--game-grid-color, #444);
@@ -169,6 +220,7 @@ export const gameControllerStyles = css`
     }
 
     .inner-square {
+      position: relative;
       height: calc(100% - 2px);
       width: calc(100% - 2px);
       border-radius: 3px;
@@ -203,15 +255,15 @@ export const gameControllerStyles = css`
       }
 
       &.filled {
-        background-color: var(--square-filled-background-color, #353235);
+        background-color: var(--square-filled-background-color, #353235fa);
       }
 
       &.empty {
-        background-color: var(--square-empty-background-color, #fff);
+        background-color: var(--square-empty-background-color, #ffffffaa);
       }
 
       &.marked {
-        background-color: var(--square-marked-background-color, #fff);
+        background-color: var(--square-marked-background-color, #ffffffaa);
         color: var(--square-marked-symbol-color, #bbb);
         transition: color 0.4s;
 
