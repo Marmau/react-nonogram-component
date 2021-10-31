@@ -26,13 +26,11 @@ You need React > 17 in your dependencies.
 ```typescript
 import { NonogramGrid } from "react-nonogram-component"
 
-const solution = {
-    rows: 2,
-    cols: 2,
-    values: [true, false, false, true]
-}
+const rows = 2
+const cols = 2
+const solution = [true, false, false, true]
 
-<NonogramGrid solution={solution} />
+<NonogramGrid rows={rows} cols={cols} solution={solution} />
 ```
 
 A demo project is under the `demo/` directory.
