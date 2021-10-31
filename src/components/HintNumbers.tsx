@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo } from "react"
+import React, { memo, useEffect, useMemo, useState } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { useBoard } from "../hooks/useBoard"
 import { useHints } from "../hooks/useHints"
@@ -21,9 +21,20 @@ function LineHintNumbers({
   id: string
 }) {
   const setCrossoutsAtom = useSetRecoilState(CrossoutsAtom)
+  const [crossout, setCrossout] = useState<HintCrossoutLine>({
+    completed: false,
+    overflow: false,
+    line: goalHints.map(hint => ({
+      crossout: false,
+      hint
+    }))
+  })
 
-  const crossout = useMemo(() => {
-    return generateCrossoutFor(line, goalHints)
+  // TODO: use a worker to delegate the computing of hints?
+  useEffect(() => {
+    setTimeout(() => {
+      setCrossout(generateCrossoutFor(line, goalHints))
+    }, Math.random() * 100)
   }, [line, goalHints])
 
   useEffect(() => {
