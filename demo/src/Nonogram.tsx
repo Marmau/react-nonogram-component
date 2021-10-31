@@ -44,14 +44,14 @@ export function Nonogram() {
     return qrcode.create(textToDiscover, {}).modules
   }, [textToDiscover])
 
+  const cols = qrModules.size
+  const rows = qrModules.size
+
   const solution = useMemo(
-    () => ({
-      values: ([...qrModules.data] as number[]).map((bit) => {
+    () =>
+      ([...qrModules.data] as number[]).map((bit) => {
         return bit === 1
       }),
-      rows: qrModules.size,
-      cols: qrModules.size
-    }),
     [qrModules]
   )
 
@@ -59,16 +59,16 @@ export function Nonogram() {
     (row: number, col: number) => {
       const groupsToReveal = [
         [0, 0, 8, 8],
-        [0, solution.cols - 8, 8, solution.cols],
-        [solution.rows - 8, 0, solution.rows, 8],
-        [0, 6, solution.rows, 7],
-        [6, 0, 7, solution.cols],
+        [0, cols - 8, 8, cols],
+        [rows - 8, 0, rows, 8],
+        [0, 6, rows, 7],
+        [6, 0, 7, cols],
         qrModules.size >= 25
           ? [
-              solution.rows - 7 - 2,
-              solution.cols - 7 - 2,
-              solution.rows - 7 + 3,
-              solution.cols - 7 + 3
+              rows - 7 - 2,
+              cols - 7 - 2,
+              rows - 7 + 3,
+              cols - 7 + 3
             ]
           : [0, 0, 0, 0]
       ]
@@ -77,13 +77,13 @@ export function Nonogram() {
         (g) => row >= g[0] && row < g[2] && col >= g[1] && col < g[3]
       )
     },
-    [solution, qrModules]
+    [qrModules, rows, cols]
   )
 
   const init = useMemo(() => {
-    return solution.values.map((v, i) => {
-      const col = i % solution.cols
-      const row = Math.floor(i / solution.cols)
+    return solution.map((v, i) => {
+      const col = i % cols
+      const row = Math.floor(i / cols)
 
       if (isInGroup(row, col)) {
         return v ? "filled" : "marked"
@@ -91,7 +91,7 @@ export function Nonogram() {
         return "empty"
       }
     })
-  }, [solution, isInGroup])
+  }, [cols, solution, isInGroup])
 
   const [actions, setActions] = useState<NonogramActions | undefined>(undefined)
 
@@ -153,7 +153,13 @@ export function Nonogram() {
             --square-marked-symbol-color: #9e9cbd;
           `}
         >
-          <NonogramGrid solution={solution} init={init} onRefresh={refresh} />
+          <NonogramGrid
+            rows={rows}
+            cols={cols}
+            solution={solution}
+            init={init}
+            onRefresh={refresh}
+          />
         </Box>
 
         <Box

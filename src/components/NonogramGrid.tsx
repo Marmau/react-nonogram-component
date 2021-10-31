@@ -11,36 +11,41 @@ import {
 } from '../utils/context'
 import { generateHints } from '../utils/hints'
 import { Matrix, MetaMatrix } from '../utils/Matrix'
-import { NonogramGridInput, SquareValue, NonogramActions } from '../utils/types'
+import { SquareValue, NonogramActions } from '../utils/types'
 import { GameController } from './GameController'
 
 interface NonogramGridProps {
-  solution: NonogramGridInput<boolean | 'filled' | 'empty'>
+  // solution: NonogramGridInput<boolean | 'filled' | 'empty'>
+  rows: number
+  cols: number
+  solution: (boolean | 'filled' | 'empty')[]
   init?: SquareValue[]
   onRefresh?: (nonogramActions: NonogramActions) => void
 }
 
 function RecoilNonogramGrid({
+  rows,
+  cols,
   solution,
   init,
   onRefresh = () => {}
 }: NonogramGridProps) {
   const solutionMatrix = React.useMemo(() => {
     return new Matrix(
-      solution.values.map((elem) => {
+      solution.map((elem) => {
         if (typeof elem === 'boolean') {
           return elem ? 'filled' : 'marked'
         } else {
           return elem
         }
       }),
-      new MetaMatrix(solution.rows, solution.cols)
+      new MetaMatrix(rows, cols)
     )
   }, [solution])
 
   const initMatrix = React.useMemo(() => {
     return init
-      ? new Matrix(init, new MetaMatrix(solution.rows, solution.cols))
+      ? new Matrix(init, new MetaMatrix(rows, cols))
       : undefined
   }, [init])
 

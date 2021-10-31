@@ -60,17 +60,17 @@ Here are the default values:
 
 ### Component parameters
 
-`solution`: the solution for the grid
+`rows`: Number of rows of the grid
+
+`cols`: Number of columns of the grid
+
+`solution`: the solution for the grid (1D array)
 
 ```typescript
-export interface NonogramGridInput {
-  values: (boolean | SquareValue.EMPTY | SquareValue.FILLED)[] // 1D array with all square values
-  rows: number // number of rows
-  cols: number // number of cols
-}
+type Solution = (boolean | SquareValue.EMPTY | SquareValue.FILLED)[] // 1D array with all square values
 ```
 
-`init`: initial grid displayed to the player
+`init`: initial grid displayed to the player (1D array)
 
 ```typescript
 type Init = (SquareValue.EMPTY | SquareValue.FILLED | SquareValue.MARKED)[] // 1D array with all square values

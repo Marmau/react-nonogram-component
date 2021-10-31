@@ -2,12 +2,6 @@ export type SquareValue = "empty" | "filled" | "marked"
 
 export type LineType = "col" | "row"
 
-export interface NonogramGridInput<T> {
-  values: T[]
-  rows: number
-  cols: number
-}
-
 /**
  * Structure that makes up the hint
  * number values.
