@@ -146,7 +146,6 @@ function computePossibleCrossouts(
     const [firstHint, ...lastHints] = remainingHints
 
     if (firstHint === undefined) {
-      console.log("endcompute", current, remainingLineAnalysis)
       if (current.every((c) => c === true || c === "true_but")) {
         return [current.map((c) => (c === "true_but" ? true : c))]
       } else if (remainingLineAnalysis.every((la) => !isFilled(la[1]))) {
