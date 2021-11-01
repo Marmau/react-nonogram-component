@@ -166,7 +166,7 @@ function computePossibleCrossouts(
         firstHint,
         usableLineAnalysis
       )
-      console.log("appliables", remainingHints, usableLineAnalysis, appliables)
+
       return appliables.flatMap((appliableLA) => {
         const [crossout, next] = applyHintToLineAnalysis(firstHint, appliableLA)
         return recursion(lastHints, next, current.concat(crossout))
@@ -182,7 +182,6 @@ function computeAndAggregateCrossouts(
   lineAnalysis: LineAnalysis
 ): boolean[] {
   const allCrossoutsByLine = computePossibleCrossouts(goalHints, lineAnalysis)
-  console.log("possible", allCrossoutsByLine)
 
   if (allCrossoutsByLine.length === 0) {
     return goalHints.map(() => false)
