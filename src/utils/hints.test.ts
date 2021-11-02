@@ -72,3 +72,9 @@ test("_ _ x x _ _ x _ _ _ _ m _ => {1 free} {2 filled} {1 filled} {3 free} {1 fr
     [1, "free"]
   ])
 })
+
+test("_ _ _ _ => {}", () => {
+  expect(analyzeLine(["empty", "empty", "empty", "empty"])).toStrictEqual([
+    [4, "free"]
+  ])
+})

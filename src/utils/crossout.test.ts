@@ -1,5 +1,25 @@
 import { computeCrossoutLine } from "./hints"
 
+test("0 => _ _ _ => 0 (completed)", () => {
+  expect(
+    computeCrossoutLine(
+      [0],
+      [
+        [4, "free"]
+      ]
+    )
+  ).toStrictEqual({
+    line: [
+      {
+        hint: 0,
+        crossout: true
+      }
+    ],
+    overflow: false,
+    completed: true
+  })
+})
+
 test("1 => [10 free][1 filled][10 free] => 1 (completed)", () => {
   expect(
     computeCrossoutLine(

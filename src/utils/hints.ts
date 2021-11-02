@@ -180,6 +180,10 @@ function computeAndAggregateCrossouts(
   goalHints: number[],
   lineAnalysis: LineAnalysis
 ): boolean[] {
+  if (goalHints[0] === 0) {
+    return [true]
+  }
+  
   const allCrossoutsByLine = computePossibleCrossouts(goalHints, lineAnalysis)
 
   if (allCrossoutsByLine.length === 0) {
