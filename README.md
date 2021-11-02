@@ -23,14 +23,17 @@ You need React > 17 in your dependencies.
 
 ### Example
 
+A simple nonogram grid of 3 rows / 4 columns: https://stackblitz.com/edit/react-ts-zftptv?file=index.tsx
+
 ```typescript
 import { NonogramGrid } from "react-nonogram-component"
+const solution = [
+  true, true, false, true, 
+  true, false, true, true,
+  false, false, true, false,
+];
 
-const rows = 2
-const cols = 2
-const solution = [true, false, false, true]
-
-<NonogramGrid rows={rows} cols={cols} solution={solution} />
+return <NonogramGrid rows={3} cols={4} solution={solution} /></div>;
 ```
 
 A demo project is under the `demo/` directory.
