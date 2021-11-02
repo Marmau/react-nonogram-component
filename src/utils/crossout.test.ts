@@ -320,7 +320,7 @@ test("2 1 2 => _ _ _ x x _ x x _ _ _ _  => _ _ _", () => {
 })
 
 // 1 _ 1 1 1
-test("1 1 1 1 1 => x _ x x _ x x _ x _ x _ _   => 1 _ _ 1 _", () => {
+test("1 1 1 1 1 => x _ x x _ x x _ x _ x _ _   => 1 _ 1 1 _", () => {
   expect(
     computeCrossoutLine(
       [1, 1, 1, 1, 1],
@@ -674,6 +674,59 @@ test("1 1 3 2 4 2 2 => x_x_xxx_xx*___xx*_x_____ =>  1 1 3 2 _ _ _ ", () => {
       },
       {
         hint: 2,
+        crossout: false
+      },
+      {
+        hint: 2,
+        crossout: false
+      }
+    ],
+    overflow: false,
+    completed: false
+  })
+})
+
+
+test("1 3 1 1 1 1 2 => x_xxx_x___x___x*__*__ =>  1 3 1 _ _ _ _ ", () => {
+  expect(
+    computeCrossoutLine(
+      [1, 3, 1, 1, 1, 1, 2],
+      [
+        [1, "filled"],
+        [3, "filled"],
+        [1, "filled"],
+        [1, "free"],
+        [1, "filled"],
+        [1, "free"],
+        [1, "filled"],
+        [2, "free"],
+        [2, "free"]
+      ]
+    )
+  ).toStrictEqual({
+    line: [
+      {
+        hint: 1,
+        crossout: true
+      },
+      {
+        hint: 3,
+        crossout: true
+      },
+      {
+        hint: 1,
+        crossout: true
+      },
+      {
+        hint: 1,
+        crossout: false
+      },
+      {
+        hint: 1,
+        crossout: false
+      },
+      {
+        hint: 1,
         crossout: false
       },
       {
