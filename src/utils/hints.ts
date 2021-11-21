@@ -183,7 +183,7 @@ function computeAndAggregateCrossouts(
   if (goalHints[0] === 0) {
     return [true]
   }
-  
+
   const allCrossoutsByLine = computePossibleCrossouts(goalHints, lineAnalysis)
 
   if (allCrossoutsByLine.length === 0) {
@@ -260,6 +260,8 @@ export function computeCrossoutLine(
       hint: goalHints[i]
     })),
     overflow:
+      (goalHints[0] === 0 &&
+        lineAnalysis.filter((la) => la[1] === "filled").length > 0) ||
       lineAnalysis.filter((la) => la[1] === "filled").length > goalHints.length
   }
 }
